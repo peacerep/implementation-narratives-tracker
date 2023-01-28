@@ -1,0 +1,8 @@
+@font-face {
+    /*自定义字体名*/
+    font-family: 'Inter';
+    /*路径*/
+    src: url('Inter-VariableFont_slnt\,wght.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
