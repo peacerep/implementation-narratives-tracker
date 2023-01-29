@@ -24,8 +24,19 @@
 
         <el-main>
             <docList 
-                :dataListDisplayed="dataListDisplayed"
+                :dataListDisplayed="dataListDisplayed.slice(sizePerPage*(currentPage-1),sizePerPage*currentPage)"
                 :title="title" />
+            
+            <!-- page split -->
+            <div class="paginationClass">
+            <el-pagination
+                :page-size="sizePerPage"
+                :total="this.dataListDisplayed.length"
+                hide-on-single-page
+                @current-change="currentChange"
+            ></el-pagination>
+            </div>
+
         </el-main>
 
       </el-container>
@@ -70,13 +81,21 @@ export default ({
                     title: 'dates',
                     value: this.yearOptions
                 }
-            ]
+            ],
+
+            //page split
+            sizePerPage: 6,
+            currentPage: 1
         }
     },
 
     methods: {
         changeDisplayList(newList) {
             this.dataListDisplayed = newList
+        },
+
+        currentChange(current) {
+            this.currentPage = current
         }
     },
 
@@ -135,11 +154,12 @@ export default ({
                     else {
                         //包含多个话题的文件，追加topics
                         agreementList[index].topics.push(topic)
-                    }      
+                    }
+                    
+
                 }
                 
             }
-            console.log('列表', agreementList)
         return {
             countryName, data, agreementList, topicOptions, yearOptions
         }
@@ -148,7 +168,11 @@ export default ({
 </script>
 
 <style scoped>
-
+.el-main{
+    height: 100vh;
+    overflow:auto;
+    background-color: burlywood;
+}
 .country-layout .el-header {
   background-color: #D9D9D9;
   padding: 10px 20px;
@@ -168,6 +192,13 @@ export default ({
   background-color: white;
 }
 
+
+.paginationClass {
+    position: relative;
+    bottom: 0;
+    text-align: center;
+}
+
 .el-row {
     margin-left: 50px;
     margin-bottom: 10px;
@@ -184,7 +215,7 @@ export default ({
 .el-divider--vertical{
   display:inline-block;
   width:1px;
-  height:50em;
+  height: 100vh;
   margin:0 8px;
   vertical-align:middle;
   position:relative;

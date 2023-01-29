@@ -69,14 +69,18 @@
 
         //generate filter list
         let tmpArr = []
-            for (let topic of this.checkedOptions) {
-            for (let agtObj of this.allAgt) {
-                if ( agtObj.topics.includes(topic) || agtObj.year.includes(topic) && !tmpArr.includes(agtObj)){
-                tmpArr.push(agtObj)
-                }
-            }
-            }
-            this.$emit('changeDisplayList', tmpArr)
+        //对于选中列表循环每个选项
+        for (let option of this.checkedOptions) {
+          //对于这个选项，循环总表中每个agt
+          for (let agtObj of this.allAgt) {
+            //对该agt，如果topic有，如果year有，就推进列表，并保持不重不漏
+              if ( (agtObj.topics.includes(option) || agtObj.year.includes(option)) && !tmpArr.includes(agtObj)){
+              tmpArr.push(agtObj)
+              }
+        }
+        }
+        console.log("fliteredAgtNum", tmpArr.length)
+        this.$emit('changeDisplayList', tmpArr)
       }
     }
   };

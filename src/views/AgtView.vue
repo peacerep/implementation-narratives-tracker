@@ -1,7 +1,7 @@
 <template>
     <trackerHeader />
 
-    <p 
+    <p
         class="country-title"
         @click="toCountryView(country)">
         {{ this.countryName }}</p>
@@ -17,7 +17,6 @@
     <topicList
         :agtTopicList="agtTopicList"
         @changeTopic="changeTopic" />
-
 
     <provisionSec
         :displayedTopic="displayedTopic"
@@ -36,7 +35,7 @@ import agtInfo from '@/components/agtInfo.vue'
 import topicList from '@/components/topicList.vue'
 import provisionSec from '@/components/provisionSec.vue'
 
-// 导入数据
+// import data
 import countries from '@/data/countries.json'
 import PAX from '@/data/agt_description_links.json'
 
@@ -49,7 +48,7 @@ export default ({
         return{
             displayedTopic: 'please select a topic',
             topicProvisionCounter: 0,
-            selectedProvisions: 0,
+            selectedProvisions: [],
             toLink: this.paxLink,
             toDescription: this.agtDescription
         }
@@ -57,8 +56,8 @@ export default ({
 
     methods: {
         changeTopic(topic) {
+            //这是选中的topic
             this.displayedTopic = topic
-            // console.log(this.displayedTopic, 'SELECTED')
 
             let subProvisionCounter = 0
             let tmpArr = []
@@ -66,17 +65,18 @@ export default ({
             for (let item of this.provisionList) {
                 if (this.displayedTopic == item.topic) {
                     subProvisionCounter = item.provisions.length
-                    // console.log('shortlist', subProvisionCounter)
                     tmpArr = item.provisions
-                    console.log(tmpArr)
                 }
             }
             this.topicProvisionCounter = subProvisionCounter
             this.selectedProvisions = tmpArr
 
-            console.log('show-tmp', tmpArr)
-            console.log('show-data',this.selectedProvisions)
         },
+    },
+
+    beforeMount(){
+        //set the default choice to be the first topic in topicList
+        this.changeTopic(this.agtTopicList[0])
     },
 
     setup() {
@@ -87,12 +87,10 @@ export default ({
         let agtDate = $route.query.agtDate
         let agtID = $route.query.id
 
-        // console.log('id',agtID)
-
         let data = {}
         let provisionList = []
 
-        //初始化本页需要的数据
+        //初始化本页需要的数据: topics+provisions+reports
         for (let country of countries.countries) {
             if (country.name == countryName) {
                 data = country
@@ -106,7 +104,30 @@ export default ({
                 }
             }
         }
-        // console.log(provisionList)
+
+        var topicR = 0
+        
+
+        //修改整体数据provisionList里的时间格式
+        for (let topics of provisionList) {
+            topicR++
+            for (let provision of topics.provisions){
+                for (let report of provision.reports){
+                    let tmp = report.date.toString()
+                    let ze = /\d{4}-\d{1,2}-\d{1,2}/
+                    if (!ze.test(tmp)) {
+                        let year = tmp.slice(0,4)
+                        let month = tmp.slice(4,6)
+                        let day = tmp.slice(6,8)
+                        let newDate = year + "-" + month + "-" + day
+                        //赋值
+                        report.date = newDate
+                    }
+                }
+            }
+            }
+        console.log("refresh", topicR)
+        
 
         //PAX links & descriptions
         let paxLink = ''
@@ -127,11 +148,9 @@ export default ({
 
         //count all the provisions
         for (let topic of provisionList) {
-            // console.log('topic',topic.topic)
             agtTopicList.push(topic.topic)
             for (let provision of topic.provisions){
                 provisionCounter++
-                // console.log(provision.reports)
                 for (let report of provision.reports) {
                     if (reportList.includes(report.id) == false){
                         reportList.push(report.id)
@@ -141,10 +160,8 @@ export default ({
             }    
         }
 
-        
-
         return {
-            agtName,agtDate, countryName, provisionList,provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription
+            agtName,agtDate, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription
         }
     }
 })

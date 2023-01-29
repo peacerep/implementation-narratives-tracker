@@ -8,12 +8,12 @@
     <el-row justify="center" class="metric-wrapper">
         <el-col :span="6">
             <p class="metric-num">{{ this.provisionCounter }}</p>
-            <p class="metric-des">provisions</p>
+            <p class="metric-des">agreement provisions <br /> relating to topics</p>
         </el-col>
 
         <el-col :span="6">
             <p class="metric-num">{{ this.reportCounter }}</p>
-            <p class="metric-des">reports</p>
+            <p class="metric-des">references to <br /> implementation</p>
         </el-col>
     </el-row>
     
@@ -48,7 +48,7 @@ export default {
 }
 
 .metric-des {
-    font-size: 16px;
+    font-size: 14px;
     margin-top: 0px;
 }
 

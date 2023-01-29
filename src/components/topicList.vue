@@ -6,8 +6,10 @@
                     <p class="topic-title">Topics Covered</p>
                     <el-link
                         :underline="false"
-                        v-for="topic in agtTopicList" :key="topic"
-                        @click="emitTopic(topic)">
+                        :class="{changeStyle:changeStyleIndex == index}"
+                        v-for="(topic, index) in agtTopicList" 
+                        :key="topic"
+                        @click="emitTopic(topic), changeStyle(index)">
                         <el-icon><CaretRight /></el-icon>{{ topic }}
                     </el-link>
                 
@@ -22,9 +24,20 @@
 export default {
     props: ['agtTopicList'],
 
+    data(){
+        return{
+            changeStyleIndex: ''
+        }
+    },
+
     methods: {
         emitTopic(topic){
             this.$emit('changeTopic', topic)
+        },
+
+        changeStyle(index){
+            this.changeStyleIndex = index
+            console.log(this.changeStyleIndex)
         }
     }
 }
@@ -34,7 +47,7 @@ export default {
 
 <style scoped>
 .topic-wrapper {
-    padding: 20px 400px;
+    padding: 20px 100px;
     background-color: #DDE4E8;
 }
 
@@ -45,6 +58,11 @@ export default {
 .topic-title {
     font-weight: medium;
     font-size: 18px;
+}
+
+.changeStyle {
+    color: black;
+    font-weight: 600;
 }
 
 .el-link {

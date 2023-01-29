@@ -4,7 +4,7 @@
         <el-link 
             class="agt-link" 
             @click="toAgtView(agreement)">{{ agreement.agt }}</el-link>
-        <p>{{ agreement.date}}</p>
+        <p class="agt-time">{{ agreement.date}}</p>
     </div>
 </template>
 
@@ -41,14 +41,8 @@ export default ({
 </script>
 
 <style scoped>
-h3 {
-    font-size: 24px;
-    padding:0px 0px;
-    margin:0px 0px;
-}
-
-p {
-    font-size: 18px;
+.agt-time {
+    font-size: 1em;
     padding:0px 0px;
     margin:5px 0px;
 }
@@ -62,7 +56,7 @@ p {
 }
 
 .agt-link {
-    font-size: 24px;
+    font-size: 1.2em;
     padding:0px 0px;
     margin:0px 0px;
 }
