@@ -17,8 +17,6 @@
                 <div class="text-container">
                 <h3>Implementation reports</h3>
                 <p class="counters">{{ this.reportCounter }} reports</p>
-
-                <!-- <p>Chronological order:</p> -->
                 <el-radio-group 
                     v-model="reverse" 
                     @change="reverseList()"
@@ -34,20 +32,28 @@
     <!-- trying the collapse -->
     <el-row justify="center" :gutter="60" class="section-wrapper">
         <el-col :span="12">
-            <div 
-                class="text-container"
+            <!-- loop the provisions -->
+            <div class="text-container"
                 v-for="(provision, index) in this.selectedProvisions"
                 :key="provision">
-                <div
-                    class="provision-container"
-                    :provision = provision>
-                    <p 
-                    class="agt-extracts"
-                    :class="{changeStyle:changeStyleIndex == index}"
-                    @click="showImplementation(provision), changeStyle(index)"> 
-                    ...{{ provision.text }}... </p>
+                <div :provision = provision class="provision-container">
+
+                    <div @click="showImplementation(provision), changeStyle(index), showDrawerButton(index)"> 
+                        <p class="agt-extracts"
+                            :class="{changeStyle:changeStyleIndex == index}">
+                        ...{{ provision.text }}... </p>
+
+                        <el-button 
+                            round size="small" 
+                            v-show="this.buttonVisible == index"
+                            @click="openDrawer(provision.number, index)"
+                            style="margin-bottom: 10px;">
+                            locate in agreement
+                    </el-button>
+                    </div>
+
                     <el-divider class="provision-divider"/>
-                </div>
+                </div>      
             </div>
         </el-col>
 
@@ -99,14 +105,25 @@
         </el-col>
          
     </el-row>
+    
+    <el-drawer
+        v-model="docDrawerOpen"
+        title="Agreement full text"
+        size="40%"
+        >
+        <docDrawer ref="docDrawer" v-bind="$attrs" :id="this.segement_id" :docDrawerOpen="docDrawerOpen" />
+    </el-drawer>
+
 </div>
 
     
 </template>
 
 <script>
+import docDrawer from "@/components/docDrawer.vue"
 
 export default ({
+    components: { docDrawer },
     props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions'],
 
     data() {
@@ -116,7 +133,13 @@ export default ({
             reportDate: "",
             reportCounter: 0,
             provisionClicked: '',
-            changeStyleIndex: ''
+            changeStyleIndex: '',
+
+            //for the drawer
+            buttonVisible: 0,
+            docDrawerOpen: false,
+            doc_id: 0,
+            segement_id: 0
         }
     },
 
@@ -139,23 +162,35 @@ export default ({
             this.changeStyleIndex = index
         },
 
+        showDrawerButton(index) {
+            this.buttonVisible = index
+        },
+
         reverseList() {
             if(this.reverse) {
                 this.displayed = this.displayed.reverse()
             }
+        },
+
+        openDrawer(id, index) {
+            this.docDrawerOpen = true,
+            this.segement_id = id
+            console.log("OPEN DRAWER read index:", index)
         }
-        
     },
 
     mounted(){
        this.showImplementation(this.selectedProvisions[0])
     },
 
-    beforeUpdate(){
-        //update default displayed reports when topic changed
-        this.showImplementation(this.selectedProvisions[0])
-        this.showImplementation(this.provisionClicked)
-        this.changeStyle(0)
+    watch: {
+        'displayedTopic': function(){
+            // set selected provision default when topic changes
+            this.showImplementation(this.selectedProvisions[0])
+            this.showImplementation(this.provisionClicked)
+            this.changeStyle(0)
+            this.showDrawerButton(0)
+        }
     }
 })
 </script>

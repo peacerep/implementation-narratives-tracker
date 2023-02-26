@@ -19,6 +19,8 @@
         @changeTopic="changeTopic" />
 
     <provisionSec
+        :agtID="this.agtID"
+        :agtName="this.agtName"
         :displayedTopic="displayedTopic"
         :topicProvisionCounter="topicProvisionCounter"
         :selectedProvisions="selectedProvisions" />
@@ -56,12 +58,11 @@ export default ({
 
     methods: {
         changeTopic(topic) {
-            //这是选中的topic
+            //assign to the selected topic
             this.displayedTopic = topic
 
             let subProvisionCounter = 0
             let tmpArr = []
-
             for (let item of this.provisionList) {
                 if (this.displayedTopic == item.topic) {
                     subProvisionCounter = item.provisions.length
@@ -80,7 +81,7 @@ export default ({
     },
 
     setup() {
-        //传入agreement和country
+        //send in agreement and country data
         const $route = useRoute()
         let agtName = $route.query.agtName
         let countryName = $route.query.title
@@ -90,7 +91,7 @@ export default ({
         let data = {}
         let provisionList = []
 
-        //初始化本页需要的数据: topics+provisions+reports
+        //initialize data to this page: topics+provisions+reports
         for (let country of countries.countries) {
             if (country.name == countryName) {
                 data = country
@@ -105,12 +106,8 @@ export default ({
             }
         }
 
-        var topicR = 0
-        
-
-        //修改整体数据provisionList里的时间格式
+        //modify the entire time format for provisionList
         for (let topics of provisionList) {
-            topicR++
             for (let provision of topics.provisions){
                 for (let report of provision.reports){
                     let tmp = report.date.toString()
@@ -120,14 +117,12 @@ export default ({
                         let month = tmp.slice(4,6)
                         let day = tmp.slice(6,8)
                         let newDate = year + "-" + month + "-" + day
-                        //赋值
+                        //assign value
                         report.date = newDate
                     }
                 }
             }
             }
-        console.log("refresh", topicR)
-        
 
         //PAX links & descriptions
         let paxLink = ''
@@ -140,7 +135,7 @@ export default ({
             }
         }
 
-        //本页显示内容
+        //THIS PAGE context
         let provisionCounter = 0
         let reportCounter = 0
         let reportList = []
@@ -161,7 +156,7 @@ export default ({
         }
 
         return {
-            agtName,agtDate, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription
+            agtName, agtDate, agtID, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription
         }
     }
 })
