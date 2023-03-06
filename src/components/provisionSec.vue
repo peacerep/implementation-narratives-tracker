@@ -49,7 +49,7 @@
                             @click="openDrawer(provision.number, index)"
                             style="margin-bottom: 10px;">
                             locate in agreement
-                    </el-button>
+                        </el-button>
                     </div>
 
                     <el-divider class="provision-divider"/>
@@ -61,41 +61,50 @@
         style="height: 80vh; overflow: auto;">
             <el-timeline :reverse="reverse" class="timeline">
                 <el-timeline-item
-                    v-for="report in this.displayed"
+                    v-for="(report, index) in this.displayed"
                     :key="report"
                     :timestamp="report.date"
                     placement="top" 
                     >
-                <el-card shadow="hover">
-                <h3>{{ report.name }}</h3>
-                <p class="repo-source">Source:{{ report.label }}</p>
-                <div
-                    v-for="segment in report.segments"
-                    :key="segment"
-                    class="segment-container"
-                    >
-                    <div >
-                    <el-row class="segment-wrapper">
-                        <el-col :span="22">
-                            <p class="segment-text">{{ segment.text }}</p>
-                        </el-col>
-                        <el-col :span="2">
-                            <div v-if="segment.polarity > 0">
-                            <el-tag effect="plain" type="success" size="small" round>
-                            positive
-                            </el-tag></div>
-                        <div v-else-if="segment.polarity < 0">
-                            <el-tag effect="plain" type="danger" size="small" round>
-                            negative
-                            </el-tag></div>
-                        <div v-else>
-                            <el-tag effect="plain" type="info" size="small" round>
-                            neutral
-                            </el-tag></div>
-                        </el-col>
-                    </el-row>
-                    
-                    </div>
+                <el-card 
+                    shadow="hover"
+                    @mouseover="this.reportbuttonVisible = index" @mouseleave="this.reportbuttonVisible = 9999">
+                    <h3>{{ report.name }}</h3>
+                    <p class="repo-source">Source:{{ report.label }}</p>
+
+                    <el-button 
+                        round size="small" 
+                        v-show="this.reportbuttonVisible == index"
+                        @click="openReportDrawer(report.id)">
+                        open full report
+                    </el-button>
+
+                    <div
+                        v-for="segment in report.segments"
+                        :key="segment"
+                        class="segment-container"
+                        >
+                        <div>
+                        <el-row class="segment-wrapper">
+                            <el-col :span="22">
+                                <p class="segment-text">{{ segment.text }}</p>
+                            </el-col>
+                            <el-col :span="2">
+                                <div v-if="segment.polarity > 0">
+                                <el-tag effect="plain" type="success" size="small" round>
+                                positive
+                                </el-tag></div>
+                            <div v-else-if="segment.polarity < 0">
+                                <el-tag effect="plain" type="danger" size="small" round>
+                                negative
+                                </el-tag></div>
+                            <div v-else>
+                                <el-tag effect="plain" type="info" size="small" round>
+                                neutral
+                                </el-tag></div>
+                            </el-col>
+                        </el-row>
+                        </div>
                     </div>
                 
                 <!-- <el-divider /> -->
@@ -106,24 +115,34 @@
          
     </el-row>
     
+    <!-- Agreement Full Text -->
     <el-drawer
         v-model="docDrawerOpen"
+        :direction="direction"
         title="Agreement full text"
-        size="40%"
+        size="45%"
         >
         <docDrawer ref="docDrawer" v-bind="$attrs" :id="this.segement_id" :docDrawerOpen="docDrawerOpen" />
     </el-drawer>
 
-</div>
+    <!-- Report Full Text -->
+    <el-drawer
+        v-model="reportDrawerOpen"
+        title="Report full text"
+        size="45%"
+        >
+        <reportDrawer :report="this.selectedReport" :reportDrawerOpen="reportDrawerOpen" :allIDs="allIDs" />
+    </el-drawer>
 
-    
+</div>
 </template>
 
 <script>
 import docDrawer from "@/components/docDrawer.vue"
+import reportDrawer from "@/components/reportDrawer.vue"
 
 export default ({
-    components: { docDrawer },
+    components: { docDrawer, reportDrawer },
     props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions'],
 
     data() {
@@ -139,7 +158,14 @@ export default ({
             buttonVisible: 0,
             docDrawerOpen: false,
             doc_id: 0,
-            segement_id: 0
+            segement_id: 0,
+            direction: 'ltr',
+
+            //for the report drawer
+            reportbuttonVisible: 999,
+            reportDrawerOpen: false,
+            selectedReport: [],
+            allIDs: []
         }
     },
 
@@ -156,6 +182,7 @@ export default ({
             }
             this.displayed = displayedReports
             this.reportCounter = displayedReports.length
+            // console.log("TOPICS USED", this.displayed)
         },
 
         changeStyle(index){
@@ -175,7 +202,26 @@ export default ({
         openDrawer(id, index) {
             this.docDrawerOpen = true,
             this.segement_id = id
-            console.log("OPEN DRAWER read index:", index)
+            console.log(index)
+        },
+
+        openReportDrawer(reportId) {
+            // console.log("CLICK VAR", reportId)
+            this.reportDrawerOpen = true
+
+            // this.selectedReport = report
+            for (let report of this.displayed) {
+                // console.log("REPORT", report)
+                if ( reportId == report.id ) {
+                    this.selectedReport = report
+                }
+            }
+
+            var segmentIds = []
+            for ( let segment of this.selectedReport.segments) {
+                segmentIds.push(segment.number) 
+            }
+            this.allIDs = segmentIds
         }
     },
 
@@ -191,6 +237,10 @@ export default ({
             this.changeStyle(0)
             this.showDrawerButton(0)
         }
+    },
+
+    created() {
+        
     }
 })
 </script>
@@ -283,4 +333,10 @@ h3 {
     margin: 0px;
     padding-top: 10px;
 }
+
+/deep/ .el-drawer__body {
+    padding-top: 0px;
+}
+
+
 </style>

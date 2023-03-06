@@ -49,12 +49,11 @@ export default ({
         
 		// Synchronous request
         let xhr = new XMLHttpRequest();
-        const url = '../docsHtml/'+countryFolderName+'/agreements/'+this.agt+".html"
+        const url = './docsHtml/'+countryFolderName+'/agreements/'+this.agt+".html"
 		xhr.open("GET", url, false);
 		xhr.setRequestHeader('Content-type', 'text/html');
 		xhr.send();
         this.document = xhr.response
-
     },
 
     mounted() { 
