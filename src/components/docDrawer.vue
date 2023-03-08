@@ -21,23 +21,26 @@ export default ({
 
     methods: {
         do_highlight(id) {
-        tmp_id = id
-        let selected = document.getElementById(tmp_id);
-        selected.style.background = "yellow";
+            tmp_id = id
+            let highlightQuerry = "div[id='doc'] a[id='" + tmp_id + "']"
+            let selected = document.querySelector(`${highlightQuerry}`)
+            selected.style.background = "yellow";
         },
 
         clear_highlight() {
             if (tmp_id > -1) {
-                document.getElementById(tmp_id).style.background = "white";
+                let clearQuerry = "div[id='doc'] a[id='" + tmp_id + "']"
+                document.querySelector(`${clearQuerry}`).style.background = "white";
                 tmp_id = -1
             }
         },
 
         force_scrolling(id) {
             setTimeout(function () {
-                let element = document.getElementById(`${id}`)
-                element.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
-            },500)
+                let scrollQuerry = "div[id='doc'] a[id='" + id + "']"
+                let provisionElement = document.querySelector(`${scrollQuerry}`)
+                provisionElement.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
+            }, 300)
         }
     },
 

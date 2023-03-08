@@ -11,7 +11,6 @@
     </div>
 
     <div class="inner-drawer">
-        
         <div id="repo" v-html="reportText"></div>
     </div>
 </template>
@@ -36,38 +35,36 @@ export default ({
         do_highlight(idList) {
             this.tmpArr = idList;
             for (let id of idList) {
-                let selected = document.getElementById(id)
+                let highlightQuerry = "div[id='repo'] a[id='" + id + "']"
+                let selected = document.querySelector(`${highlightQuerry}`)
                 selected.style.background = "yellow";
             }
         },
 
         force_scrolling(dif) {
             let segNum = this.allIDs.length
-
             let arr = []
             let item = JSON.parse(JSON.stringify(this.allIDs))
             for ( let id of item ) {
                 id = parseInt(id)
                 arr.push(id)
             }
-            arr.sort(function(a, b){return a - b}); 
+            arr.sort(function(a, b){return a - b})
 
             if ( i >= -1 && i < segNum-1) {
-                console.log({i: i, dif: dif})
                 i = i + dif
-                
                 if ( dif == -1 ) {
                     i = 0
-                    this.$message('back to the top.');
+                    this.$message('back to the top.')
                 }
             }
             else {
                 i = 0
-                this.$message('back to the top.');
+                this.$message('back to the top.')
             }
             let scrollToId = arr[i]
-            console.log({scrollToId: scrollToId, dif: dif, i: i})
-            let element = document.getElementById(`${scrollToId}`);
+            let scrollQuerry = "div[id='repo'] a[id='" + scrollToId + "']"
+            let element = document.querySelector(`${scrollQuerry}`);
             element.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
         },
 
@@ -82,7 +79,6 @@ export default ({
         
         getReport() {
             // Synchronous request
-            console.log("打开报告", this.report.id)
             let xhr = new XMLHttpRequest();
             const url = "./docsHtml/" + this.folderName + "/reports/" + this.report.id + ".html";
             xhr.open("GET", url, false);
@@ -101,8 +97,13 @@ export default ({
             arr.sort(function(a, b){return a - b})
             this.sortedIDs = arr
             let id = this.sortedIDs[0]
-            let element = document.getElementById(`${id}`);
-            element.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" });
+
+            let querryID = "div[id='repo'] a[id='" + id + "']"
+            let element = document.querySelector(`${querryID}`)
+            setTimeout(function() {
+                element.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" })
+            }, 100)
+            
         }
     },
 
@@ -115,9 +116,9 @@ export default ({
     },
 
     mounted() {
-        this.do_highlight(this.allIDs)
         const that = this
         setTimeout(function() {
+            that.do_highlight(that.allIDs)
             that.defaultScroll()
         }, 100)
     },
@@ -132,7 +133,7 @@ export default ({
                 setTimeout(function() {
                     that.do_highlight(that.allIDs);
                     that.defaultScroll()
-                }, 100)
+                }, 50)
             }
         }
     }
