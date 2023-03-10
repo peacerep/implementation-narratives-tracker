@@ -1,21 +1,22 @@
 <template>
     <div class="tracker">
         <div class="title">
-            <h2>{{ this.displayedTopic }}</h2>
+            <p style="margin-bottom: 0px;">Selected Topic</p>
+            <h2 style="margin-top: 10px;">{{ this.displayedTopic }}</h2>
             
         </div>
         <!-- heading for the provisions/implementation -->
         <el-row justify="center" :gutter="60" class="section-wrapper">
             <el-col :span="12">
                 <div class="text-container">
-                <h3>Agreement extracts</h3>
+                <h3>Agreement Extracts</h3>
                 <p class="counters">{{ this.topicProvisionCounter }} records</p>
                 </div>
             </el-col>
 
             <el-col :span="12">
                 <div class="text-container">
-                <h3>Implementation reports</h3>
+                <h3>Implementation Reports</h3>
                 <p class="counters">{{ this.reportCounter }} reports</p>
                 <el-radio-group 
                     v-model="reverse" 
@@ -48,7 +49,7 @@
                             v-show="this.buttonVisible == index"
                             @click="openDrawer(provision.number, index)"
                             style="margin-bottom: 10px;">
-                            locate in agreement
+                            Locate in Agreement
                         </el-button>
                     </div>
 
@@ -63,21 +64,23 @@
                 <el-timeline-item
                     v-for="(report, index) in this.displayed"
                     :key="report"
-                    :timestamp="report.date"
+                    :timestamp="report.newTimeStamp"
                     placement="top" 
                     >
                 <el-card 
                     shadow="hover"
                     @mouseover="this.reportbuttonVisible = index" @mouseleave="this.reportbuttonVisible = 9999">
                     <h3>{{ report.name }}</h3>
-                    <p class="repo-source">Source:{{ report.label }}</p>
 
-                    <el-button 
-                        round size="small" 
-                        v-show="this.reportbuttonVisible == index"
-                        @click="openReportDrawer(report.id)">
-                        open full report
-                    </el-button>
+                    <div class="source-wrapper">
+                        <p class="repo-source">Source: {{ report.label }}</p>
+                        <el-button 
+                            round size="small" 
+                            v-show="this.reportbuttonVisible == index"
+                            @click="openReportDrawer(report.id)">
+                            Open Full Report
+                        </el-button>
+                    </div>
 
                     <div
                         v-for="segment in report.segments"
@@ -170,6 +173,7 @@ export default ({
     },
 
     methods: {
+        
         showImplementation(provision) {
             this.provisionClicked = provision
             let repoID = provision.number
@@ -180,9 +184,42 @@ export default ({
                     displayedReports = item.reports
                 }
             }
+
+            let agtDate = document.querySelector(".info-wrapper p").innerHTML
+            agtDate = new Date(agtDate)
+            
+
+            for (let report of displayedReports) {
+                let repoDate = report.date
+                repoDate = new Date(repoDate)
+                const monthDiff = repoDate.getMonth() - agtDate.getMonth()
+                const yearDiff = repoDate.getYear() - agtDate.getYear()
+                const difference = monthDiff + yearDiff * 12;
+
+                let timeDif, month, year = ''
+                let yearNum, monthNum = 0
+
+                yearNum = Math.floor(difference / 12)
+                if ( yearNum == 1) { year = yearNum + ' year ' }
+                else { year = yearNum + ' years ' }
+
+                monthNum = difference - yearNum * 12
+                if ( monthNum == 1) { month = monthNum + ' month ' }
+                else if (monthNum == 0) { month = ''}
+                else { month = monthNum + ' months ' }
+
+                if (difference >= 12) {
+                    timeDif = year + month + 'after agreement'
+                }
+                else {
+                    timeDif = month + 'after agreement'
+                }
+
+                report['newTimeStamp'] = report.date + '  |  ' + timeDif
+                
+            }
             this.displayed = displayedReports
             this.reportCounter = displayedReports.length
-            // console.log("TOPICS USED", this.displayed)
         },
 
         changeStyle(index){
@@ -331,12 +368,18 @@ h3 {
 
 .repo-source {
     margin: 0px;
-    padding-top: 10px;
+    padding: 5px 5px 5px 0px;
 }
 
 /deep/ .el-drawer__body {
     padding-top: 0px;
 }
 
+.source-wrapper {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 
 </style>
