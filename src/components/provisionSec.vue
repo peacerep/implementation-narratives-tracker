@@ -22,8 +22,8 @@
                     v-model="reverse" 
                     @change="reverseList()"
                     class="radio-group">
-                    <el-radio label="true">Latest</el-radio>
-                    <el-radio label="false">Oldest</el-radio>
+                    <el-radio label="2">Oldest</el-radio>
+                    <el-radio label="1">Latest</el-radio>
                 </el-radio-group>
 
                 </div>
@@ -150,7 +150,7 @@ export default ({
 
     data() {
         return {
-            reverse: "",
+            reverse: '2',
             displayed: [],
             reportDate: "",
             reportCounter: 0,
@@ -173,7 +173,6 @@ export default ({
     },
 
     methods: {
-        
         showImplementation(provision) {
             this.provisionClicked = provision
             let repoID = provision.number
