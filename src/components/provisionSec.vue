@@ -187,7 +187,6 @@ export default ({
             let agtDate = document.querySelector(".info-wrapper p").innerHTML
             agtDate = new Date(agtDate)
             
-
             for (let report of displayedReports) {
                 let repoDate = report.date
                 repoDate = new Date(repoDate)
@@ -199,19 +198,33 @@ export default ({
                 let yearNum, monthNum = 0
 
                 yearNum = Math.floor(difference / 12)
-                if ( yearNum == 1) { year = yearNum + ' year ' }
-                else { year = yearNum + ' years ' }
+                if ( yearNum == 1) { 
+                    year = yearNum + ' year ' 
+                }
+                else { 
+                    year = yearNum + ' years ' 
+                }
 
                 monthNum = difference - yearNum * 12
-                if ( monthNum == 1) { month = monthNum + ' month ' }
-                else if (monthNum == 0) { month = ''}
-                else { month = monthNum + ' months ' }
+                if ( monthNum == 1) { 
+                    month = monthNum + ' month '
+                 }
+                else if (monthNum == 0) { 
+                    month = ''
+                }
+                else { 
+                    month = monthNum + ' months ' 
+                }
 
                 if (difference >= 12) {
                     timeDif = year + month + 'after agreement'
                 }
-                else {
+                else if ( difference > 0 && difference < 12) {
                     timeDif = month + 'after agreement'
+                }
+                else {
+                    const dayDiff = repoDate.getDate() - agtDate.getDate()
+                    timeDif = dayDiff + ' days after agreement'
                 }
 
                 report['newTimeStamp'] = report.date + '  |  ' + timeDif
