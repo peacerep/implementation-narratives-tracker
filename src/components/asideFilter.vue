@@ -39,7 +39,7 @@
       return {
         checkAll: true,
         checkedOptions: this.allOptions,
-        options: this.allOptions, //应该从父组件中v-for得到
+        options: this.allOptions, 
         isIndeterminate: true
       };
     },
@@ -79,7 +79,6 @@
               }
         }
         }
-        console.log("fliteredAgtNum", tmpArr.length)
         this.$emit('changeDisplayList', tmpArr)
       }
     }

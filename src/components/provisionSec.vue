@@ -60,6 +60,7 @@
 
         <el-col :span="12"
         style="height: 80vh; overflow: auto;">
+            <div id="if-empty"></div>
             <el-timeline :reverse="reverse" class="timeline">
                 <el-timeline-item
                     v-for="(report, index) in this.displayed"
@@ -232,6 +233,14 @@ export default ({
             }
             this.displayed = displayedReports
             this.reportCounter = displayedReports.length
+
+            const emptyDiv = document.querySelector("#if-empty")
+            if (this.reportCounter == 0) {
+                emptyDiv.innerHTML = '<p>No implementation record found for this provision extract.</p>';
+            }
+            else {
+                emptyDiv.innerHTML = ''
+            }
         },
 
         changeStyle(index){
@@ -255,12 +264,9 @@ export default ({
         },
 
         openReportDrawer(reportId) {
-            // console.log("CLICK VAR", reportId)
             this.reportDrawerOpen = true
 
-            // this.selectedReport = report
             for (let report of this.displayed) {
-                // console.log("REPORT", report)
                 if ( reportId == report.id ) {
                     this.selectedReport = report
                 }
