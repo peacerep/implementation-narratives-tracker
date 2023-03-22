@@ -125,20 +125,16 @@ export default ({
         for (let item of data.topics) {
                 topic = item.text
                 topicOptions.push(topic)
-                // let topicTagList = []
 
-                for (let [index, agt] of item.agreements.entries()){
+                for (let agt of item.agreements){
                     agtName = agt.name
                     agtID = agt.id
                     let agtTime = ''
-                    let topicTagList = []
                     
                     // decide if this agt is in the list
                     if (agtList.includes(agtName) == false){
                         agtList.push(agtName)
                         
-                        // append topic to this agt in loop
-                        topicTagList.push(topic)
                         // get agt time
                         let tmp = agt.date.toString()
                         let YEAR = tmp.slice(0,4)
@@ -149,16 +145,16 @@ export default ({
                         if(yearOptions.includes(YEAR) == false){
                             yearOptions.push(YEAR)
                         }
-                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "topics": topicTagList})
+                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "topics": [topic]})
                     }
                     else {
-                        // for those with more topics
-                        agreementList[index].topics.push(topic)
+                        for (let subAgt of agreementList) {
+                            if (subAgt.agt == agtName) {
+                                subAgt.topics.push(topic)
+                            }
+                        }                        
                     }
-                    
-
                 }
-                
             }
         return {
             countryName, data, agreementList, topicOptions, yearOptions
@@ -169,8 +165,8 @@ export default ({
 
 <style scoped>
 .el-main{
-    height: 100vh;
-    overflow:auto;
+    /* height: 100vh; */
+    /* overflow:auto; */
     background-color: burlywood;
 }
 .country-layout .el-header {

@@ -67,7 +67,7 @@
         this.checkAll = checkedCount === this.options.length
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.options.length
 
-        //generate filter list
+        // generate filter list
         let tmpArr = []
         // loop the checked option list
         for (let option of this.checkedOptions) {
