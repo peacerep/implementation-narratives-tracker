@@ -125,20 +125,21 @@ export default ({
         for (let item of data.topics) {
                 topic = item.text
                 topicOptions.push(topic)
-                let topicTagList = []
+                // let topicTagList = []
 
                 for (let [index, agt] of item.agreements.entries()){
                     agtName = agt.name
                     agtID = agt.id
                     let agtTime = ''
+                    let topicTagList = []
                     
-                    //得到文件名后，判断agtList里是否已经有这个文件
+                    // decide if this agt is in the list
                     if (agtList.includes(agtName) == false){
                         agtList.push(agtName)
-
-                        //对这个文件添加话题表
+                        
+                        // append topic to this agt in loop
                         topicTagList.push(topic)
-                        //得到时间
+                        // get agt time
                         let tmp = agt.date.toString()
                         let YEAR = tmp.slice(0,4)
                         let MONTH = tmp.slice(4,6)
@@ -148,11 +149,10 @@ export default ({
                         if(yearOptions.includes(YEAR) == false){
                             yearOptions.push(YEAR)
                         }
-                        
                         agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "topics": topicTagList})
                     }
                     else {
-                        //包含多个话题的文件，追加topics
+                        // for those with more topics
                         agreementList[index].topics.push(topic)
                     }
                     
