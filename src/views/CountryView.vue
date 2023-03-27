@@ -1,5 +1,5 @@
 <template>
-  <trackerHeader />
+  <!-- <trackerHeader /> -->
 
   <div class="country-layout">
     <el-container>
@@ -8,7 +8,7 @@
         </el-header>
 
       <el-container>
-        <el-aside width="435px">
+        <!-- <el-aside width="435px">
 
         <asideFilter
             v-for="(filters, i) in filterList"
@@ -18,9 +18,9 @@
             :allAgt="allAgt"
             @changeDisplayList="changeDisplayList"
         />
-        </el-aside>
+        </el-aside> -->
 
-        <el-divider direction="vertical"></el-divider>
+        <!-- <el-divider direction="vertical"></el-divider> -->
 
         <el-main>
             <docList 
@@ -43,15 +43,15 @@
     </el-container>
   </div>
 
-  <trackerFooter />
+  <!-- <trackerFooter /> -->
 </template>
 
 <script>
 import { useRoute } from 'vue-router'
 
-import trackerHeader from '@/components/trackerHeader.vue'
-import trackerFooter from '@/components/trackerFooter.vue'
-import asideFilter from '@/components/asideFilter.vue'
+// import trackerHeader from '@/components/trackerHeader.vue'
+// import trackerFooter from '@/components/trackerFooter.vue'
+// import asideFilter from '@/components/asideFilter.vue'
 import countryHeader from '@/components/countryHeader.vue'
 import docList from '@/components/docList.vue'
 
@@ -60,7 +60,7 @@ import countries from '@/data/countries.json'
 
 export default ({
     components: {
-        trackerHeader, trackerFooter, asideFilter, countryHeader, docList
+        countryHeader, docList
     },
 
     data() {
@@ -74,11 +74,11 @@ export default ({
 
             filterList: [
                 {
-                    title: 'topics',
+                    title: 'agreements by topics',
                     value: this.topicOptions
                 },
                 {
-                    title: 'dates',
+                    title: 'agreements by years',
                     value: this.yearOptions
                 }
             ],

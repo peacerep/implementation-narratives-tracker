@@ -1,18 +1,19 @@
 <template>
-    <trackerHeader />
+    <!-- <trackerHeader /> -->
+    <div class="agt-head">
+        <p
+            class="country-title"
+            @click="toCountryView(country)">
+            {{ this.countryName }}</p>
+        <h1>{{ this.agtName }}</h1>
 
-    <p
-        class="country-title"
-        @click="toCountryView(country)">
-        {{ this.countryName }}</p>
-    <h1>{{ this.agtName }}</h1>
-
-    <agtInfo 
-        :provisionCounter="this.provisionCounter"
-        :reportCounter="this.reportCounter"
-        :agtDate="this.agtDate"
-        :toLink="toLink"
-        :toDescription="toDescription" />
+        <agtInfo 
+            :provisionCounter="this.provisionCounter"
+            :reportCounter="this.reportCounter"
+            :agtDate="this.agtDate"
+            :toLink="toLink"
+            :toDescription="toDescription" />
+    </div>
 
     <topicList
         :agtTopicList="agtTopicList"
@@ -25,14 +26,14 @@
         :topicProvisionCounter="topicProvisionCounter"
         :selectedProvisions="selectedProvisions" />
 
-    <trackerFooter />
+    <!-- <trackerFooter /> -->
 </template>
 
 <script>
 import { useRoute } from 'vue-router'
 
-import trackerHeader from '@/components/trackerHeader.vue'
-import trackerFooter from '@/components/trackerFooter.vue'
+// import trackerHeader from '@/components/trackerHeader.vue'
+// import trackerFooter from '@/components/trackerFooter.vue'
 import agtInfo from '@/components/agtInfo.vue'
 import topicList from '@/components/topicList.vue'
 import provisionSec from '@/components/provisionSec.vue'
@@ -43,7 +44,7 @@ import PAX from '@/data/agt_description_links.json'
 
 export default ({
     components: {
-        trackerHeader, trackerFooter, agtInfo, topicList, provisionSec
+        agtInfo, topicList, provisionSec
     },
 
     data() {
@@ -165,16 +166,20 @@ export default ({
 <style scoped>
 
 h1 {
-    font-size: 36px;
-    margin: 0px 200px 0px 200px;
+    font-size: 28px;
+    margin: 0px 0px 10px 0px;
 }
 
 .country-title {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: medium;
-    text-align: center;
-    margin-top: 40px;
+    margin: 10px 0px;
     padding: 0px 0px;
+}
+
+.agt-head {
+    text-align: left;
+    padding: 2vh 5%;
 }
 
 </style>

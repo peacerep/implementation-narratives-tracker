@@ -1,7 +1,7 @@
 <template>
     <div class="country">
-        <h1> {{ title }} </h1>
-        <p>Agreements</p>
+        <h1>Implementation of Past {{ title }} Agreements</h1>
+        <p>Please select an agreement to view any instances of implementation found in sucessive reports. </p>
                 <!-- <el-row :gutter="20">
                     <el-col :span="12"><h1> {{ title }} </h1></el-col>
                 </el-row>
@@ -20,21 +20,21 @@ export default ({
 
 <style scoped>
 .country {
-    padding-top:80px;
+    padding-top: 30px;
     /* padding-left: 100px; */
-    padding-bottom: 80px;
+    padding-bottom: 30px;
 }
 
 h1 {
     color: #000;
-    font-size: 48px;
+    font-size: 42px;
     /* text-align: left; */
     margin: 0px;
 }
 
 p {
     color: #000;
-    font-size: 24px;
+    font-size: 18px;
     font-weight: blod;
     /* text-align: left; */
     margin: 0px;

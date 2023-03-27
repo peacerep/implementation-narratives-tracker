@@ -101,7 +101,7 @@ h3 {
 
 .el-checkbox {
     /* display: block;  */
-    padding-top: 20px;
+    padding-top: 5px;
     margin-left: 60px;
     margin-right: 25px;
     width: 350px;

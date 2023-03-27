@@ -1,22 +1,25 @@
 <template>
     <div class="tracker">
         <div class="title">
-            <p style="margin-bottom: 0px;">Selected Topic</p>
+            <p style="margin-bottom: 0px;">Selected Topic:</p>
             <h2 style="margin-top: 10px;">{{ this.displayedTopic }}</h2>
+           
             
         </div>
         <!-- heading for the provisions/implementation -->
         <el-row justify="center" :gutter="60" class="section-wrapper">
             <el-col :span="12">
                 <div class="text-container">
-                <h3>Agreement Extracts</h3>
+                <h3>Agreement Provisions</h3>
+                <p>Click provision to view (italic)</p>
                 <p class="counters">{{ this.topicProvisionCounter }} records</p>
+                
                 </div>
             </el-col>
 
             <el-col :span="12">
                 <div class="text-container">
-                <h3>Implementation Reports</h3>
+                <h3>Implementation Instances</h3>
                 <p class="counters">{{ this.reportCounter }} reports</p>
                 <el-radio-group 
                     v-model="reverse" 
@@ -31,7 +34,7 @@
         </el-row>
 
     <!-- trying the collapse -->
-    <el-row justify="center" :gutter="60" class="section-wrapper">
+    <el-row justify="center" :gutter="30" class="section-wrapper">
         <el-col :span="12">
             <!-- loop the provisions -->
             <div class="text-container"
@@ -236,7 +239,7 @@ export default ({
 
             const emptyDiv = document.querySelector("#if-empty")
             if (this.reportCounter == 0) {
-                emptyDiv.innerHTML = '<p>No implementation record found for this provision extract.</p>';
+                emptyDiv.innerHTML = '<p>We found no instances of implementation found for this provision topic.</p>';
             }
             else {
                 emptyDiv.innerHTML = ''
@@ -307,13 +310,17 @@ h1 {
     margin: 60px 0px 0px 0px;
 }
 
+h2 {
+    font-size: 24px;
+}
+
 h3 {
     padding: 0px;
     margin: 0px;
 }
 .title {
     text-align: center;
-    margin: 40px 200px 50px 200px;
+    margin: 40px 0px 20px 0px;
 }
 
 .counters {
@@ -335,7 +342,7 @@ h3 {
 }
 
 .tracker {
-    margin: 0px 100px 100px 100px;
+    margin: 0 5%;
 }
 
 .section-wrapper {
