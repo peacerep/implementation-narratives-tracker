@@ -45,7 +45,9 @@ export default ({
     },
 
     created() {
-        let countryName = document.querySelector('.country-title').innerHTML
+        let countryName = document.querySelector('#drawer').innerText
+        countryName = countryName.replace(" Agreements", "")
+        console.log(countryName)
         let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase();
         this.agt = this.$attrs.agtID
         this.title = this.$attrs.agtName
@@ -53,6 +55,7 @@ export default ({
 		// Synchronous request
         let xhr = new XMLHttpRequest();
         const url = './docsHtml/'+countryFolderName+'/agreements/'+this.agt+".html"
+        console.log("querry folders", url)
 		xhr.open("GET", url, false);
 		xhr.setRequestHeader('Content-type', 'text/html');
 		xhr.send();

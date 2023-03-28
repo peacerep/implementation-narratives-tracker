@@ -2,33 +2,29 @@
     <div class="tracker">
         <div class="title">
             <p style="margin-bottom: 0px;">Selected Topic:</p>
-            <h2 style="margin-top: 10px;">{{ this.displayedTopic }}</h2>
-           
-            
+            <h2 style="margin-top: 10px; font-style: italic;">{{ this.displayedTopic }}</h2>
         </div>
         <!-- heading for the provisions/implementation -->
         <el-row justify="center" :gutter="60" class="section-wrapper">
             <el-col :span="12">
                 <div class="text-container">
-                <h3>Agreement Provisions</h3>
-                <p>Click provision to view (italic)</p>
-                <p class="counters">{{ this.topicProvisionCounter }} records</p>
-                
+                    <h3>Agreement Provisions</h3>
+                    <p class="counters" style="font-style: italic;">Click provision to view</p>
+                    <p class="counters">{{ this.topicProvisionCounter }} records</p>
                 </div>
             </el-col>
 
             <el-col :span="12">
                 <div class="text-container">
                 <h3>Implementation Instances</h3>
-                <p class="counters">{{ this.reportCounter }} reports</p>
+                <p class="counters">{{ this.reportCounter }} instances</p>
                 <el-radio-group 
                     v-model="reverse" 
                     @change="reverseList()"
                     class="radio-group">
-                    <el-radio label="2">Oldest</el-radio>
                     <el-radio label="1">Latest</el-radio>
+                    <el-radio label="2">Oldest</el-radio>
                 </el-radio-group>
-
                 </div>
             </el-col>
         </el-row>
@@ -154,7 +150,7 @@ export default ({
 
     data() {
         return {
-            reverse: '2',
+            reverse: '1',
             displayed: [],
             reportDate: "",
             reportCounter: 0,
@@ -285,6 +281,7 @@ export default ({
 
     mounted(){
        this.showImplementation(this.selectedProvisions[0])
+       this.reverseList()
     },
 
     watch: {
@@ -320,7 +317,7 @@ h3 {
 }
 .title {
     text-align: center;
-    margin: 40px 0px 20px 0px;
+    margin: 40px 50px 20px 50px;
 }
 
 .counters {

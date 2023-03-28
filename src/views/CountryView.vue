@@ -4,6 +4,11 @@
   <div class="country-layout">
     <el-container>
         <el-header>
+            <div class="breadcrumb">
+                <el-link class="country-title" @click="home">Home</el-link>
+                <el-icon><CaretRight /></el-icon>
+                <el-link class="country-title">{{ this.title }} Agreements</el-link>
+            </div>
             <countryHeader :title="title" />
         </el-header>
 
@@ -23,6 +28,17 @@
         <!-- <el-divider direction="vertical"></el-divider> -->
 
         <el-main>
+            <div style="display: flex; flex-direction: row; align-items: center;">
+                <p style="padding: 0px 10px;">Sort by:</p>
+                <el-radio-group 
+                    v-model="reverse" 
+                    @change="reverseList()"
+                    class="radio-group">
+                    <el-radio label="1">Latest</el-radio>
+                    <el-radio label="2">Oldest</el-radio>
+                </el-radio-group>
+            </div>
+            
             <docList 
                 :dataListDisplayed="dataListDisplayed.slice(sizePerPage*(currentPage-1),sizePerPage*currentPage)"
                 :title="title" />
@@ -85,7 +101,10 @@ export default ({
 
             //page split
             sizePerPage: 6,
-            currentPage: 1
+            currentPage: 1,
+
+            //sort by date
+            reverse: '1'
         }
     },
 
@@ -96,7 +115,21 @@ export default ({
 
         currentChange(current) {
             this.currentPage = current
-        }
+        },
+
+        home(){
+            this.$router.push('/');
+        },
+
+        reverseList() {
+            if(this.reverse) {
+                this.dataListDisplayed = this.dataListDisplayed.reverse()
+            }
+        },
+    },
+
+    mounted() {
+        this.reverseList()
     },
 
     setup() {
@@ -172,12 +205,14 @@ export default ({
 .country-layout .el-header {
   background-color: #D9D9D9;
   padding: 10px 20px;
+  margin: 0px 5%;
   height: auto;
 }
 
 .country-layout .el-main {
-    padding-left: 40px;
-    padding-right: 60px;
+    /* padding-left: 40px;
+    padding-right: 60px; */
+    padding: 0px 5%;
     background-color: white;
     display: block;
     text-align: left;
@@ -215,6 +250,23 @@ export default ({
   margin:0 8px;
   vertical-align:middle;
   position:relative;
+}
+
+.country-title {
+    font-size: 16px;
+    font-weight: medium;
+    margin: 0px 5px;
+}
+
+.breadcrumb {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    margin: 10px 0px;
+}
+
+.current-page {
+    font-style: italic;
 }
 
 </style>

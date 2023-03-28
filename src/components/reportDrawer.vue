@@ -108,8 +108,9 @@ export default ({
     },
 
     created() {
-        let countryName = document.querySelector(".country-title").innerHTML;
-        let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase();
+        let countryName = document.querySelector('#drawer').innerText
+        countryName = countryName.replace(" Agreements", "")
+        let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase()
         this.folderName = countryFolderName
         this.getReport()
         this.show(this.allIDs)

@@ -1,10 +1,13 @@
 <template>
     <!-- <trackerHeader /> -->
     <div class="agt-head">
-        <p
-            class="country-title"
-            @click="toCountryView(country)">
-            {{ this.countryName }}</p>
+        <div class="breadcrumb">
+            <el-link class="country-title" @click="home">Home</el-link>
+            <el-icon><CaretRight /></el-icon>
+            <el-link id="drawer" class="country-title" @click="toCountryView(this.countryName)">{{ this.countryName }} Agreements</el-link>
+            <el-icon><CaretRight /></el-icon>
+            <el-link class="country-title current-page">Provision Implementations</el-link>
+        </div>
         <h1>{{ this.agtName }}</h1>
 
         <agtInfo 
@@ -72,8 +75,20 @@ export default ({
             }
             this.topicProvisionCounter = subProvisionCounter
             this.selectedProvisions = tmpArr
-
         },
+
+        toCountryView(country) {
+            this.$router.push({
+                name: `country`,
+                query: {
+                    title: `${country}`
+                }
+            })
+        },
+
+        home(){
+            this.$router.push('/');
+        }
     },
 
     beforeMount(){
@@ -170,16 +185,26 @@ h1 {
     margin: 0px 0px 10px 0px;
 }
 
-.country-title {
-    font-size: 16px;
-    font-weight: medium;
-    margin: 10px 0px;
-    padding: 0px 0px;
-}
-
 .agt-head {
     text-align: left;
     padding: 2vh 5%;
+}
+
+.country-title {
+    font-size: 16px;
+    font-weight: medium;
+    margin: 0px 5px;
+}
+
+.breadcrumb {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    margin: 10px 0px;
+}
+
+.current-page {
+    font-style: italic;
 }
 
 </style>
