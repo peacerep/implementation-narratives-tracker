@@ -10,6 +10,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.10",
     "core-js": "^3.8.3",
+    "d3": "^7.8.3",
     "element-plus": "^2.2.28",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3"
@@ -35,7 +36,7 @@
     ],
     "parserOptions": {
       "parser": "@babel/eslint-parser",
-      "requireConfigFile" : false
+      "requireConfigFile": false
     },
     "rules": {}
   },

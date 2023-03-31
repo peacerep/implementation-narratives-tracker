@@ -18,6 +18,9 @@
                 <div class="text-container">
                 <h3>Implementation Instances</h3>
                 <p class="counters">{{ this.reportCounter }} instances</p>
+
+                <div id="chart"></div>
+
                 <el-radio-group 
                     v-model="reverse" 
                     @change="reverseList()"
@@ -25,6 +28,7 @@
                     <el-radio label="1">Latest</el-radio>
                     <el-radio label="2">Oldest</el-radio>
                 </el-radio-group>
+                
                 </div>
             </el-col>
         </el-row>
@@ -38,7 +42,7 @@
                 :key="provision">
                 <div :provision = provision class="provision-container">
 
-                    <div @click="showImplementation(provision), changeStyle(index), showDrawerButton(index)"> 
+                    <div @click="showImplementation(provision), renderInstanceBar(), changeStyle(index), showDrawerButton(index)"> 
                         <p class="agt-extracts"
                             :class="{changeStyle:changeStyleIndex == index}">
                         ...{{ provision.text }}... </p>
@@ -143,6 +147,7 @@
 <script>
 import docDrawer from "@/components/docDrawer.vue"
 import reportDrawer from "@/components/reportDrawer.vue"
+import * as d3 from "d3";
 
 export default ({
     components: { docDrawer, reportDrawer },
@@ -156,6 +161,7 @@ export default ({
             reportCounter: 0,
             provisionClicked: '',
             changeStyleIndex: '',
+            instanceBarData: [],
 
             //for the drawer
             buttonVisible: 0,
@@ -186,7 +192,25 @@ export default ({
 
             let agtDate = document.querySelector(".info-wrapper p").innerHTML
             agtDate = new Date(agtDate)
-            
+
+            // console.log("displayedReports", displayedReports)
+            // {reportID: 0, segmentID: 1, polarity: 0.5, status: "positive"}
+
+            let segmentPolarityIndex = []
+
+            displayedReports.forEach((report) => {
+                report.segments.forEach((segment) => {
+                    segmentPolarityIndex.push({
+                    reportID: report.id,
+                    segmentID: segment.number,
+                    polarity: segment.polarity,
+                    date: report.date,
+                    })
+                })
+            })
+            this.instanceBarData = segmentPolarityIndex
+            console.log("segmentPolarityIndex", segmentPolarityIndex)
+
             for (let report of displayedReports) {
                 let repoDate = report.date
                 repoDate = new Date(repoDate)
@@ -240,6 +264,57 @@ export default ({
             else {
                 emptyDiv.innerHTML = ''
             }
+        },
+
+        renderInstanceBar() {
+            // clear the div first
+            const chartDiv = document.getElementById("chart")
+            chartDiv.innerHTML = ""
+
+            //generate the visualization
+            const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+            const width = 800 - margin.left - margin.right;
+            const height = 100 - margin.top - margin.bottom;
+            const data = this.instanceBarData
+
+            const svg = d3
+            .select("#chart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            const x = d3
+            .scaleTime()
+            .domain(d3.extent(data, (d) => new Date(d.date)))
+            .range([0, width - data.length * 2]); // Adjust the x-scale range
+
+            const xAxis = d3.axisBottom(x);
+
+            svg
+            .append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+            const colorScale = (polarity) => {
+            if (polarity > 0) return "green";
+            if (polarity < 0) return "red";
+            return "grey";
+            };
+
+            svg
+            .selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", (d) => x(new Date(d.date)))
+            .attr("y", 0)
+            .attr("width", 18) // Decrease the width of each square
+            .attr("height", 20)
+            .attr("fill", (d) => colorScale(d.polarity));
+            
         },
 
         changeStyle(index){
