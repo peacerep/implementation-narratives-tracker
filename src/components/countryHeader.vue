@@ -1,7 +1,7 @@
 <template>
     <div class="country">
         <h1>Implementation of Past {{ title }} Agreements</h1>
-        <p>Please select an agreement to view any instances of implementation found in sucessive reports. </p>
+        <p>Please select an agreement to explore reports on how different provisions and topics were implemented.</p>
                 <!-- <el-row :gutter="20">
                     <el-col :span="12"><h1> {{ title }} </h1></el-col>
                 </el-row>

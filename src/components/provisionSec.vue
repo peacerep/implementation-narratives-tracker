@@ -17,18 +17,23 @@
             <el-col :span="12">
                 <div class="text-container">
                 <h3>Implementation Instances</h3>
-                <p class="counters">{{ this.reportCounter }} instances</p>
-
-                <div id="chart"></div>
-
-                <el-radio-group 
-                    v-model="reverse" 
-                    @change="reverseList()"
-                    class="radio-group">
-                    <el-radio label="1">Latest</el-radio>
-                    <el-radio label="2">Oldest</el-radio>
-                </el-radio-group>
                 
+                <div id="chart" v-show="displayChart"></div>
+                <div id="chart-report" v-show="!displayChart"></div>
+
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <p class="counters">{{ this.reportCounter }} instances</p>
+                    <p class="counters">{{ this.segmentCounter }} segments</p>
+                    <el-radio-group 
+                        v-model="reverse" 
+                        @change="reverseList()"
+                        class="radio-group">
+                        <el-radio label="1">Latest</el-radio>
+                        <el-radio label="2">Oldest</el-radio>
+                    </el-radio-group>
+                    <el-button @click="toggleDisplay" style="margin-left: 10px;">Vis Toggle</el-button>
+                </div>
+
                 </div>
             </el-col>
         </el-row>
@@ -42,7 +47,7 @@
                 :key="provision">
                 <div :provision = provision class="provision-container">
 
-                    <div @click="showImplementation(provision), renderInstanceBar(), changeStyle(index), showDrawerButton(index)"> 
+                    <div @click="showImplementation(provision), renderInstanceBar(), renderReportBar(), changeStyle(index), showDrawerButton(index)"> 
                         <p class="agt-extracts"
                             :class="{changeStyle:changeStyleIndex == index}">
                         ...{{ provision.text }}... </p>
@@ -159,9 +164,12 @@ export default ({
             displayed: [],
             reportDate: "",
             reportCounter: 0,
+            segmentCounter: 0,
             provisionClicked: '',
             changeStyleIndex: '',
             instanceBarData: [],
+            reportBarData: [],
+            displayChart: true,
 
             //for the drawer
             buttonVisible: 0,
@@ -190,6 +198,8 @@ export default ({
                 }
             }
 
+            
+
             let agtDate = document.querySelector(".info-wrapper p").innerHTML
             agtDate = new Date(agtDate)
 
@@ -201,15 +211,30 @@ export default ({
             displayedReports.forEach((report) => {
                 report.segments.forEach((segment) => {
                     segmentPolarityIndex.push({
-                    reportID: report.id,
-                    segmentID: segment.number,
-                    polarity: segment.polarity,
-                    date: report.date,
+                        reportID: report.id,
+                        segmentID: segment.number,
+                        polarity: segment.polarity,
+                        date: report.date,
                     })
                 })
             })
             this.instanceBarData = segmentPolarityIndex
-            console.log("segmentPolarityIndex", segmentPolarityIndex)
+            this.segmentCounter = segmentPolarityIndex.length
+            // console.log("segmentPolarityIndex", segmentPolarityIndex)
+
+            const reportPolarityIndex = displayedReports.map(report => {
+            const totalPolarity = report.segments.reduce((acc, segment) => acc + segment.polarity, 0);
+            const averagePolarity = totalPolarity / report.segments.length;
+
+            return {
+                reportID: report.id,
+                date: report.date,
+                polarity: averagePolarity
+            }
+            })
+
+            this.reportBarData = reportPolarityIndex
+
 
             for (let report of displayedReports) {
                 let repoDate = report.date
@@ -254,6 +279,12 @@ export default ({
                 report['newTimeStamp'] = report.date + '  |  ' + timeDif
                 
             }
+
+            // sort the arrary by date descending order
+            displayedReports.sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            })
+
             this.displayed = displayedReports
             this.reportCounter = displayedReports.length
 
@@ -266,55 +297,128 @@ export default ({
             }
         },
 
+        toggleDisplay() {
+            this.displayChart = !this.displayChart
+        },
+
         renderInstanceBar() {
             // clear the div first
             const chartDiv = document.getElementById("chart")
             chartDiv.innerHTML = ""
 
-            //generate the visualization
-            const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-            const width = 800 - margin.left - margin.right;
-            const height = 100 - margin.top - margin.bottom;
-            const data = this.instanceBarData
+            if (this.reportCounter != 0) {
+                //generate the visualization
+                const reportTimeline = document.querySelector('.timeline')
+                const reportTimelineWidth = reportTimeline.offsetWidth
+                const margin = { top: 5, right: 10, bottom: 20, left: 10 };
+                const width = reportTimelineWidth - margin.left - margin.right;
+                const height = 50 - margin.top - margin.bottom;
+                const data = this.instanceBarData
 
-            const svg = d3
-            .select("#chart")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                const svg = d3
+                .select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            const x = d3
-            .scaleTime()
-            .domain(d3.extent(data, (d) => new Date(d.date)))
-            .range([0, width - data.length * 2]); // Adjust the x-scale range
+                const x = d3
+                        .scaleBand()
+                        .domain(data.map((_, i) => i))
+                        .range([0, width])
+                        .padding(0.1); // Add padding between squares
 
-            const xAxis = d3.axisBottom(x);
+                const xAxis = d3
+                        .axisBottom(x)
+                        .tickFormat((i) => i + 1); // Use steps (index + 1) as tick labels
+                        
+                svg
+                .append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
 
-            svg
-            .append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
+                const colorScale = (polarity) => {
+                    if (polarity > 0) return "YellowGreen";
+                    if (polarity < 0) return "LightCoral";
+                    return "Gainsboro";
+                };
 
-            const colorScale = (polarity) => {
-            if (polarity > 0) return "green";
-            if (polarity < 0) return "red";
-            return "grey";
-            };
+                svg
+                .selectAll(".bar")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", (_, i) => x(i))
+                .attr("y", 0)
+                // .attr("width", 10)
+                .attr("width", x.bandwidth())
+                .attr("height", 20)
+                .attr("fill", (d) => colorScale(d.polarity));
+            }  
+        },
 
-            svg
-            .selectAll(".bar")
-            .data(data)
-            .enter()
-            .append("rect")
-            .attr("class", "bar")
-            .attr("x", (d) => x(new Date(d.date)))
-            .attr("y", 0)
-            .attr("width", 18) // Decrease the width of each square
-            .attr("height", 20)
-            .attr("fill", (d) => colorScale(d.polarity));
-            
+        renderReportBar(){
+            // clear the div first
+            const chartDiv = document.getElementById("chart-report")
+            chartDiv.innerHTML = ""
+
+            if (this.reportCounter != 0) {
+                //generate the visualization
+                const reportTimeline = document.querySelector('.timeline')
+                const reportTimelineWidth = reportTimeline.offsetWidth
+                const margin = { top: 5, right: 10, bottom: 20, left: 10 };
+                const width = reportTimelineWidth - margin.left - margin.right;
+                const height = 50 - margin.top - margin.bottom;
+                const data = this.reportBarData
+
+                const svg = d3
+                        .select("#chart-report")
+                        .append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                const x = d3
+                        .scaleTime()
+                        .domain(d3.extent(data, (d) => new Date(d.date)))
+                        .range([0, width - data.length * 2]); // Adjust the x-scale range
+
+                const xAxis = d3
+                            .axisBottom(x)
+                            .ticks(d3.timeMonth.every(3)) // Display ticks every quarter
+                            .tickFormat((d) => {
+                                // Format tick labels with month number or year
+                                return d.getMonth() === 0
+                                ? d.getFullYear()
+                                : d.toLocaleString('en-US', { month: 'short' });
+                            });
+
+                svg
+                .append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+                const colorScale = (polarity) => {
+                    if (polarity > 0) return "YellowGreen";
+                    if (polarity < 0) return "LightCoral";
+                    return "Gainsboro";
+                };
+
+                svg
+                    .selectAll(".bar")
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "bar")
+                    .attr("x", (d) => x(new Date(d.date)))
+                    .attr("y", 0)
+                    .attr("width", 10) // Decrease the width of each square
+                    .attr("height", 20)
+                    .attr("fill", (d) => colorScale(d.polarity));
+            }
         },
 
         changeStyle(index){
@@ -331,10 +435,10 @@ export default ({
             }
         },
 
-        openDrawer(id, index) {
+        openDrawer(id) {
             this.docDrawerOpen = true,
             this.segement_id = id
-            console.log(index)
+
         },
 
         openReportDrawer(reportId) {
@@ -356,7 +460,8 @@ export default ({
 
     mounted(){
        this.showImplementation(this.selectedProvisions[0])
-       this.reverseList()
+       this.renderInstanceBar()
+       this.renderReportBar()
     },
 
     watch: {
@@ -364,13 +469,11 @@ export default ({
             // set selected provision default when topic changes
             this.showImplementation(this.selectedProvisions[0])
             this.showImplementation(this.provisionClicked)
+            this.renderInstanceBar()
+            this.renderReportBar()
             this.changeStyle(0)
             this.showDrawerButton(0)
         }
-    },
-
-    created() {
-        
     }
 })
 </script>
@@ -396,12 +499,13 @@ h3 {
 }
 
 .counters {
-    padding: 10px 0px;
+    padding: 5px 5px;
     margin: 0px;
 }
 
 .radio-group {
-    padding: 0px 0px 10px 0px;
+    float: right;
+    padding: 5px 0px 5px 50px;
 }
 
 .text-container {

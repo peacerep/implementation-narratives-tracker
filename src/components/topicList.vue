@@ -49,7 +49,7 @@ export default {
 
         changeStyle(index){
             this.changeStyleIndex = index
-            console.log(this.changeStyleIndex)
+            // console.log(this.changeStyleIndex)
         }
     }
 }
