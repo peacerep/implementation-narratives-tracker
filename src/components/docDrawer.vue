@@ -9,7 +9,7 @@
 var tmp_id = -1;
 
 export default ({
-    props: ["id", "docDrawerOpen"],
+    props: ["id", "docDrawerOpen", "country"],
 
     data() {
         return {
@@ -45,8 +45,7 @@ export default ({
     },
 
     created() {
-        let countryName = document.querySelector('#drawer').innerText
-        countryName = countryName.replace(" Agreements", "")
+        let countryName = this.country
         let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase();
         this.agt = this.$attrs.agtID
         this.title = this.$attrs.agtName

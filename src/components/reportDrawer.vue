@@ -20,7 +20,7 @@ import { ArrowLeft } from '@element-plus/icons-vue';
 let i = 0
 
 export default ({
-    props: ["report", "allIDs", "reportDrawerOpen"],
+    props: ["report", "allIDs", "reportDrawerOpen", "country"],
     components: { ArrowLeft },
     data() {
         return {
@@ -108,8 +108,7 @@ export default ({
     },
 
     created() {
-        let countryName = document.querySelector('#drawer').innerText
-        countryName = countryName.replace(" Agreements", "")
+        let countryName = this.country
         let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase()
         this.folderName = countryFolderName
         this.getReport()

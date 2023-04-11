@@ -134,7 +134,7 @@
         title="Agreement full text"
         size="45%"
         >
-        <docDrawer ref="docDrawer" v-bind="$attrs" :id="this.segement_id" :docDrawerOpen="docDrawerOpen" />
+        <docDrawer ref="docDrawer" v-bind="$attrs" :id="this.segement_id" :docDrawerOpen="docDrawerOpen" :country="country"/>
     </el-drawer>
 
     <!-- Report Full Text -->
@@ -143,7 +143,7 @@
         title="Report full text"
         size="45%"
         >
-        <reportDrawer :report="this.selectedReport" :reportDrawerOpen="reportDrawerOpen" :allIDs="allIDs" />
+        <reportDrawer :report="this.selectedReport" :reportDrawerOpen="reportDrawerOpen" :allIDs="allIDs" :country="country" />
     </el-drawer>
 
 </div>
@@ -156,7 +156,7 @@ import * as d3 from "d3";
 
 export default ({
     components: { docDrawer, reportDrawer },
-    props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions'],
+    props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions', 'country'],
 
     data() {
         return {

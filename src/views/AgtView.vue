@@ -27,7 +27,8 @@
         :agtName="this.agtName"
         :displayedTopic="displayedTopic"
         :topicProvisionCounter="topicProvisionCounter"
-        :selectedProvisions="selectedProvisions" />
+        :selectedProvisions="selectedProvisions"
+        :country="countryName" />
 
     <!-- <trackerFooter /> -->
 </template>
@@ -56,7 +57,8 @@ export default ({
             topicProvisionCounter: 0,
             selectedProvisions: [],
             toLink: this.paxLink,
-            toDescription: this.agtDescription
+            toDescription: this.agtDescription,
+            country: ""
         }
     },
 
