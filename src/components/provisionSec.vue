@@ -153,6 +153,7 @@
 import docDrawer from "@/components/docDrawer.vue"
 import reportDrawer from "@/components/reportDrawer.vue"
 import * as d3 from "d3";
+// import { beeswarm } from "d3-beeswarm";
 
 export default ({
     components: { docDrawer, reportDrawer },
@@ -301,6 +302,10 @@ export default ({
             this.displayChart = !this.displayChart
         },
 
+        mapRange(value, inputMin, inputMax, outputMin, outputMax) {
+            return (value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin
+            },
+
         renderInstanceBar() {
             // clear the div first
             const chartDiv = document.getElementById("chart")
@@ -310,53 +315,73 @@ export default ({
                 //generate the visualization
                 const reportTimeline = document.querySelector('.timeline')
                 const reportTimelineWidth = reportTimeline.offsetWidth
-                const margin = { top: 5, right: 10, bottom: 20, left: 10 };
+                const margin = { top: 10, right: 20, bottom: 20, left: 10 };
                 const width = reportTimelineWidth - margin.left - margin.right;
-                const height = 50 - margin.top - margin.bottom;
-                const data = this.instanceBarData
+                const data = JSON.parse(JSON.stringify(this.instanceBarData));
 
-                const svg = d3
-                .select("#chart")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                // Get the MAX count of a instances in the report
+                console.log("original", data)
+                const reportCounts = data.reduce((counts, entry) => {
+                    if (counts.hasOwnProperty(entry.reportID)) {
+                        counts[entry.reportID]++;
+                    } else {
+                        counts[entry.reportID] = 1;
+                    }
+                    return counts;
+                    }, {});
 
-                const x = d3
-                        .scaleBand()
-                        .domain(data.map((_, i) => i))
-                        .range([0, width])
-                        .padding(0.1); // Add padding between squares
+                const maxCount = Math.max(...Object.values(reportCounts))
+                const mappedValue = Math.round(this.mapRange(maxCount, 1, 30, 60, 130))
+                console.log("max", maxCount, "height", mappedValue)
+                const height = mappedValue - margin.top - margin.bottom;
 
-                const xAxis = d3
-                        .axisBottom(x)
-                        .tickFormat((i) => i + 1); // Use steps (index + 1) as tick labels
-                        
-                svg
-                .append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+                // Define the scales
+                const xScale = d3.scaleTime().domain(d3.extent(data, d => new Date(d.date))).range([10, width]);
+                const yScale = d3.scaleLinear().domain([-1, 1]).range([height, 20]);
 
-                const colorScale = (polarity) => {
-                    if (polarity > 0) return "YellowGreen";
-                    if (polarity < 0) return "LightCoral";
-                    return "Gainsboro";
-                };
+                // Define the colors
+                const color = d3.scaleOrdinal().domain([1, 0, -1]).range(["green", "lightgrey", "red"]);
+                
+                // Define the collide with circle radius
+                const radius = 6
 
-                svg
-                .selectAll(".bar")
+                // Define the force simulation
+                const simulation = d3.forceSimulation(data)
+                .force("x", d3.forceX(d => xScale(new Date(d.date))).strength(1))
+                .force("y", d3.forceY(d => yScale(d.polarity)).strength(1))
+                .force("collide", d3.forceCollide(radius+1.5))
+                .stop();
+
+                const svg = d3.select("#chart").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+                // Create the axes
+                const xAxis = d3.axisBottom(xScale)
+                                .ticks(d3.timeMonth.every(3))
+                                .tickFormat(d => {
+                                    const month = d3.timeFormat("%b")(d);
+                                    const year = d3.timeFormat("%Y")(d);
+                                    return month === "Jan" ? `${year}` : month;
+                                });
+                svg.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+
+                // Run the force simulation
+                for (let i = 0; i < 120; ++i) simulation.tick();
+
+                // Render the beeswarm chart
+                svg.selectAll(".dot")
                 .data(data)
                 .enter()
-                .append("rect")
-                .attr("class", "bar")
-                .attr("x", (_, i) => x(i))
-                .attr("y", 0)
-                // .attr("width", 10)
-                .attr("width", x.bandwidth())
-                .attr("height", 20)
-                .attr("fill", (d) => colorScale(d.polarity));
-            }  
+                .append("circle")
+                .attr("class", "dot")
+                .attr("r", radius)
+                .attr("cx", d => d.x)
+                .attr("cy", d => d.y)
+                .attr("fill", d => color(Math.sign(d.polarity)));
+            }
         },
 
         renderReportBar(){
@@ -418,6 +443,7 @@ export default ({
                     .attr("width", 10) // Decrease the width of each square
                     .attr("height", 20)
                     .attr("fill", (d) => colorScale(d.polarity));
+                // console.log("report timeline", data)
             }
         },
 
