@@ -185,7 +185,7 @@ export default ({
                             if (subAgt.agt == agtName) {
                                 subAgt.topics.push(topic)
                             }
-                        }                        
+                        }
                     }
                 }
             }
@@ -203,10 +203,11 @@ export default ({
     background-color: burlywood;
 }
 .country-layout .el-header {
-  background-color: #D9D9D9;
-  padding: 10px 20px;
-  margin: 0px 5%;
+  background-color: #F1F1F1;
+  padding: 10px 6%;
+  margin: 0px 0%;
   height: auto;
+  /* border-bottom: 2px solid black; */
 }
 
 .country-layout .el-main {

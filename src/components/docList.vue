@@ -1,10 +1,22 @@
 <template>
-    <div class='doc-list' v-for='agreement in dataListDisplayed' :key='agreement'>
-        <hr />
-        <el-link 
+    <div class='doc-list' v-for='(agreement, index) in dataListDisplayed' :key='index'>
+        <el-link
+            :underline="false" 
             class="agt-link" 
             @click="toAgtView(agreement)">{{ agreement.agt }}</el-link>
-        <p class="agt-time">{{ agreement.date}}</p>
+        <p class="agt-time">Signed date: {{ agreement.date}}</p>
+
+        <el-button text class="topic-button" @click="showTopics(index)">
+            <el-icon v-if="openedIndex === index"><ArrowUpBold /></el-icon>
+            <el-icon v-else><ArrowDownBold /></el-icon>
+            <p style="padding-left: 5px; font-weight: 800;">{{ agreement.topics.length }} topics found</p>
+        </el-button>
+
+        <div class="topic-box" v-show="openedIndex === index">
+            <el-link class="topic-text" :underline="false"
+            v-for="topic in agreement.topics" :key="topic"  
+            @click="toAgtView_topic(agreement, topic)">{{ topic }}</el-link>
+        </div>
     </div>
 </template>
 
@@ -16,6 +28,7 @@ export default ({
     data() {
         return {
             country:  this.title,
+            openedIndex: -1,
         }
     },
 
@@ -27,15 +40,32 @@ export default ({
                     title: `${this.country}`,
                     id: `${agreement.id}`,
                     agtName: `${agreement.agt}`,
-                    agtDate: `${agreement.date}`
+                    agtDate: `${agreement.date}`,
+                    topic: `${agreement.topics[0]}`
                 }
             })
-            // console.log(agreement.agt)
+        },
+
+        toAgtView_topic(agreement, topic) {
+            this.$router.push({
+                name: `agreement`,
+                query: {
+                    title: `${this.country}`,
+                    id: `${agreement.id}`,
+                    agtName: `${agreement.agt}`,
+                    agtDate: `${agreement.date}`,
+                    topic: `${topic}`
+                }
+            })
+        },
+
+        showTopics(index) {
+            this.openedIndex = this.openedIndex === index ? -1 : index;
         }
     },
 
-    setup () {
-       
+    mounted() {
+        console.log(this.dataListDisplayed)
     }
 })
 </script>
@@ -48,7 +78,9 @@ export default ({
 }
 
 .doc-list {
-    margin: 50px 0px;
+    margin: 30px 0px;
+    padding: 20px;
+    border-bottom: 1px solid lightgrey;
 }
 
 .title {
@@ -56,9 +88,35 @@ export default ({
 }
 
 .agt-link {
-    font-size: 1.2em;
+    font-size: 1.3em;
+    color: black;
     padding:0px 0px;
     margin:0px 0px;
 }
 
+.agt-link:hover {
+    color: #409eff;
+}
+
+.topic-box {
+    background-color: aliceblue;
+    padding: 10px;
+    margin: 0px 0px 10px 0px;
+    width: 75%;
+}
+
+.topic-text {
+    font-size: 14px;
+    padding: 0px;
+    margin: 5px;
+}
+
+.el-button{
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.el-link {
+    display: block;
+}
 </style>

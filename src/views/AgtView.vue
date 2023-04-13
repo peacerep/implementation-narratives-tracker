@@ -20,6 +20,7 @@
 
     <topicList
         :agtTopicList="agtTopicList"
+        :selTopic="selTopic"
         @changeTopic="changeTopic" />
 
     <provisionSec
@@ -95,7 +96,8 @@ export default ({
 
     beforeMount(){
         //set the default choice to be the first topic in topicList
-        this.changeTopic(this.agtTopicList[0])
+        // this.changeTopic(this.agtTopicList[0])
+        this.changeTopic(this.selTopic)
     },
 
     setup() {
@@ -105,6 +107,9 @@ export default ({
         let countryName = $route.query.title
         let agtDate = $route.query.agtDate
         let agtID = $route.query.id
+        let selTopic = $route.query.topic
+
+        console.log("传值", selTopic)
 
         let data = {}
         let provisionList = []
@@ -174,7 +179,7 @@ export default ({
         }
 
         return {
-            agtName, agtDate, agtID, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription
+            agtName, agtDate, agtID, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription, selTopic
         }
     }
 })

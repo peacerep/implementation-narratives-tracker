@@ -320,18 +320,18 @@ export default ({
                 const data = JSON.parse(JSON.stringify(this.instanceBarData));
 
                 // Get the MAX count of a instances in the report
-                console.log("original", data)
                 const reportCounts = data.reduce((counts, entry) => {
-                    if (counts.hasOwnProperty(entry.reportID)) {
-                        counts[entry.reportID]++;
-                    } else {
-                        counts[entry.reportID] = 1;
-                    }
-                    return counts;
-                    }, {});
+                if (Object.prototype.hasOwnProperty.call(counts, entry.reportID)) {
+                    counts[entry.reportID]++;
+                } else {
+                    counts[entry.reportID] = 1;
+                }
+                return counts;
+                }, {});
+                const maxCount = Math.max(...Object.values(reportCounts));
 
-                const maxCount = Math.max(...Object.values(reportCounts))
-                const mappedValue = Math.round(this.mapRange(maxCount, 1, 30, 60, 130))
+                // Map this to 
+                const mappedValue = Math.round(this.mapRange(maxCount, 1, 30, 65, 130))
                 console.log("max", maxCount, "height", mappedValue)
                 const height = mappedValue - margin.top - margin.bottom;
 
