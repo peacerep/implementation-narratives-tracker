@@ -28,7 +28,7 @@
                         v-model="reverse" 
                         @change="reverseList()"
                         class="radio-group">
-                        <el-radio label="1">Latest</el-radio>
+                        <el-radio label="1">Newest</el-radio>
                         <el-radio label="2">Oldest</el-radio>
                     </el-radio-group>
                     <el-button @click="toggleDisplay" style="margin-left: 10px;">Vis Toggle</el-button>

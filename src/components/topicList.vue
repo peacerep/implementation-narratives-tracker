@@ -6,7 +6,7 @@
             <template #title >
                 <div class="title-container">
                     <h3 class="title-line"> {{ this.topicsCount }} Topics found in this agreement:</h3>
-                    <p class="title-line">Expand and select to show any implementation instantces</p>
+                    <p class="title-line">Expand and select to show any implementation intances</p>
                 </div>
             </template>
             <el-link
