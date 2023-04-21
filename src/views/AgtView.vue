@@ -24,6 +24,7 @@
         @changeTopic="changeTopic" />
 
     <provisionSec
+        :agtDate="this.agtDate"
         :agtID="this.agtID"
         :agtName="this.agtName"
         :displayedTopic="displayedTopic"
@@ -108,8 +109,6 @@ export default ({
         let agtDate = $route.query.agtDate
         let agtID = $route.query.id
         let selTopic = $route.query.topic
-
-        console.log("传值", selTopic)
 
         let data = {}
         let provisionList = []

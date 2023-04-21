@@ -17,7 +17,7 @@
             <el-col :span="12">
                 <div class="text-container">
                 <h3>Implementation Instances</h3>
-                
+                <p class="counters" style="font-style: italic;">Since agreement signed</p>
                 <div id="chart" v-show="displayChart"></div>
                 <div id="chart-report" v-show="!displayChart"></div>
 
@@ -31,7 +31,7 @@
                         <el-radio label="1">Newest</el-radio>
                         <el-radio label="2">Oldest</el-radio>
                     </el-radio-group>
-                    <el-button @click="toggleDisplay" style="margin-left: 10px;">Vis Toggle</el-button>
+                    <!-- <el-button @click="toggleDisplay" style="margin-left: 10px;">Vis Toggle</el-button> -->
                 </div>
 
                 </div>
@@ -157,7 +157,7 @@ import * as d3 from "d3";
 
 export default ({
     components: { docDrawer, reportDrawer },
-    props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions', 'country'],
+    props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions', 'country', 'agtDate'],
 
     data() {
         return {
@@ -199,8 +199,6 @@ export default ({
                 }
             }
 
-            
-
             let agtDate = document.querySelector(".info-wrapper p").innerHTML
             agtDate = new Date(agtDate)
 
@@ -235,7 +233,6 @@ export default ({
             })
 
             this.reportBarData = reportPolarityIndex
-
 
             for (let report of displayedReports) {
                 let repoDate = report.date
@@ -318,6 +315,14 @@ export default ({
                 const margin = { top: 10, right: 20, bottom: 20, left: 10 };
                 const width = reportTimelineWidth - margin.left - margin.right;
                 const data = JSON.parse(JSON.stringify(this.instanceBarData));
+                // console.log(data)
+
+                // Include 
+                const dateDomain = d3.extent(data, d => new Date(d.date))
+                const agtDate = new Date(this.agtDate)
+                dateDomain.shift()
+                dateDomain.unshift(agtDate)
+
 
                 // Get the MAX count of a instances in the report
                 const reportCounts = data.reduce((counts, entry) => {
@@ -332,15 +337,15 @@ export default ({
 
                 // Map this to 
                 const mappedValue = Math.round(this.mapRange(maxCount, 1, 30, 65, 130))
-                console.log("max", maxCount, "height", mappedValue)
                 const height = mappedValue - margin.top - margin.bottom;
 
                 // Define the scales
-                const xScale = d3.scaleTime().domain(d3.extent(data, d => new Date(d.date))).range([10, width]);
+                const xScale = d3.scaleTime().domain(dateDomain).range([10, width]);
+
                 const yScale = d3.scaleLinear().domain([-1, 1]).range([height, 20]);
 
                 // Define the colors
-                const color = d3.scaleOrdinal().domain([1, 0, -1]).range(["green", "lightgrey", "red"]);
+                const color = d3.scaleOrdinal().domain([1, 0, -1]).range(["#67c23a", "#CFD1D4", "#f56c6c"]);
                 
                 // Define the collide with circle radius
                 const radius = 6
@@ -366,7 +371,16 @@ export default ({
                                     const year = d3.timeFormat("%Y")(d);
                                     return month === "Jan" ? `${year}` : month;
                                 });
+                                
                 svg.append("g").attr("transform", `translate(0, ${height})`).call(xAxis);
+
+                // Append a rectangle at the beginning of the x-axis
+                svg.append("rect")
+                    .attr("x", margin.left)
+                    .attr("y", height - margin.bottom /2)
+                    .attr("width", 5)
+                    .attr("height", 20) 
+                    .attr("fill", "black"); 
 
                 // Run the force simulation
                 for (let i = 0; i < 120; ++i) simulation.tick();
