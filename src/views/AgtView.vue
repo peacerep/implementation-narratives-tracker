@@ -144,7 +144,7 @@ export default ({
                     }
                 }
             }
-            }
+        }
 
         //PAX links & descriptions
         let paxLink = ''

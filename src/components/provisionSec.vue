@@ -193,6 +193,8 @@ export default ({
             let repoID = provision.number
             let displayedReports = []
 
+            
+
             for (let item of this.selectedProvisions) {
                 if ( repoID == item.number) {
                     displayedReports = item.reports
@@ -201,9 +203,6 @@ export default ({
 
             let agtDate = document.querySelector(".info-wrapper p").innerHTML
             agtDate = new Date(agtDate)
-
-            // console.log("displayedReports", displayedReports)
-            // {reportID: 0, segmentID: 1, polarity: 0.5, status: "positive"}
 
             let segmentPolarityIndex = []
 
@@ -219,7 +218,6 @@ export default ({
             })
             this.instanceBarData = segmentPolarityIndex
             this.segmentCounter = segmentPolarityIndex.length
-            // console.log("segmentPolarityIndex", segmentPolarityIndex)
 
             const reportPolarityIndex = displayedReports.map(report => {
             const totalPolarity = report.segments.reduce((acc, segment) => acc + segment.polarity, 0);
@@ -285,6 +283,9 @@ export default ({
 
             this.displayed = displayedReports
             this.reportCounter = displayedReports.length
+
+            // When selected provision change, the default sorting should always be to the "neweast"
+            this.reverse = (this.reverse === '2') ? '1' : this.reverse;
 
             const emptyDiv = document.querySelector("#if-empty")
             if (this.reportCounter == 0) {
@@ -490,6 +491,8 @@ export default ({
                 }
             }
 
+            console.log("reportID", reportId)
+
             var segmentIds = []
             for ( let segment of this.selectedReport.segments) {
                 segmentIds.push(segment.number) 
@@ -513,6 +516,11 @@ export default ({
             this.renderReportBar()
             this.changeStyle(0)
             this.showDrawerButton(0)
+
+            // console.log("Sorting", this.reverse)
+            // if (this.reverse == '2') {
+            //     this.reverse = "1"
+            // }
         }
     }
 })

@@ -111,6 +111,7 @@ export default ({
     methods: {
         changeDisplayList(newList) {
             this.dataListDisplayed = newList
+            console.log("displayed", this.dataListDisplayed)
         },
 
         currentChange(current) {
@@ -139,14 +140,14 @@ export default ({
         let data = {}
         let agreementList = []
 
-        //初始化本页需要的数据
+        // Initialise agreement data in this page
         for (let country of countries.countries) {
             if (country.name == countryName) {
                 data = country
             }
         }
 
-        //得到所有agreement
+        // Get all agreement list
         let topic = ''
         let topicOptions = []
         let agtName = ''
@@ -189,6 +190,14 @@ export default ({
                     }
                 }
             }
+
+        // sort the arrary by date descending order
+        agreementList.sort(function(a, b) {
+                // return new Date(b.date) - new Date(a.date);
+                return new Date(a.date) - new Date(b.date);
+
+            })
+
         return {
             countryName, data, agreementList, topicOptions, yearOptions
         }
