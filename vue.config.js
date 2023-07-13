@@ -5,5 +5,5 @@ module.exports = defineConfig({
 })
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/implementation-narratives/' : '/'
+  publicPath: process.env.NODE_ENV === 'production' ? '/implementation-narratives-tracker/' : '/'
 }

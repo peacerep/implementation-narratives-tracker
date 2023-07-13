@@ -82,7 +82,7 @@
                     <h3>{{ report.name }}</h3>
 
                     <div class="source-wrapper">
-                        <p class="repo-source">Source: {{ report.label }}</p>
+                        <p class="repo-source">Source: {{ report.organisation }}</p>
                         <el-button 
                             round size="small" 
                             v-show="this.reportbuttonVisible == index"

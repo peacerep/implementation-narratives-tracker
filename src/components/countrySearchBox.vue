@@ -3,7 +3,6 @@
         v-model="state1"
         :fetch-suggestions="querySearch"
         clearable
-        class="search-box"
         placeholder="Select Country"
         @select="handleSelect"
       >
@@ -73,7 +72,7 @@ export default {
       const $router = useRouter();
       console.log($router, 'router');
 
-      //给下拉列表找到所有国家的名字
+      // find all countries from dataset
         let data = countries.countries;
         let countryNameArr = [];
 
@@ -89,10 +88,48 @@ export default {
 </script>
 
 
-<style>
-.search-box .el-autocomplete{
-  width: 300px;
+<style scoped>
+/deep/ .el-autocomplete{
+  /* width: 500px; */
+  display: flex;
+}
 
+/* .fk {
+  width: 100%;
+  height: 80%;
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */
+.fk >>> .el-input-group {
+  width: 60%;
+}
+
+.fk >>> .el-input__inner {
+  background-color: rgba(140, 165, 165, 0.4);
+  font-weight: bold;
+  color: #fff;
+  border-radius: 20px;
+  box-shadow: 1.5px 1px 1px #667f8a;
+}
+.fk >>> .el-input__inner:focus {
+  border-color: #b3b896;
+}
+.fk /deep/ .el-input__icon {
+  color: #617202;
+}
+.fk /deep/ .el-input__inner::placeholder {
+  color: #e6e6e6;
+}
+div /deep/ .el-autocomplete-suggestion {
+  background-color: rgba(135, 165, 165, 0.6);
+}
+
+/* 去掉下拉框的顶部小三角箭头 ，看着像一个箭头，其实是两个重叠在一起的箭头*/
+div /deep/.el-popper .popper__arrow,
+div /deep/.el-popper .popper__arrow::after {
+  display: none;
 }
 
 </style>

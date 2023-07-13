@@ -1,7 +1,6 @@
 <template>
     <el-footer>
-        <p>Footer</p>
-        <el-button @click="home">Home</el-button>
+
     </el-footer>
     
 </template>
