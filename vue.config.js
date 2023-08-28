@@ -6,8 +6,8 @@ module.exports = defineConfig({
 
 module.exports = {
   // build for onrender
-  // publicPath: '/'
+  publicPath: '/'
   
   // build for github pages
-  publicPath: process.env.NODE_ENV === 'production' ? '/implementation-narratives-tracker/' : '/'
+  // publicPath: process.env.NODE_ENV === 'production' ? '/implementation-narratives-tracker/' : '/'
 }
