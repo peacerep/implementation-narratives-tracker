@@ -149,6 +149,10 @@ export default ({
 
         // Get all agreement list
         let topic = ''
+        // find duplicate topic
+        let topicID = 0
+        let topicList = []
+
         let topicOptions = []
         let agtName = ''
         let agtID = ''
@@ -159,6 +163,11 @@ export default ({
         for (let item of data.topics) {
                 topic = item.text
                 topicOptions.push(topic)
+
+                // find duplicate topic
+                topicID = item.id
+                topicList.push({"id": topicID, "topic": topic})
+                
 
                 for (let agt of item.agreements){
                     agtName = agt.name
@@ -179,17 +188,63 @@ export default ({
                         if(yearOptions.includes(YEAR) == false){
                             yearOptions.push(YEAR)
                         }
-                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "topics": [topic]})
+
+                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "topics": [topic], "topicsID": [{id: topicID, topic: topic}]})
                     }
                     else {
                         for (let subAgt of agreementList) {
+                            // console.log(subAgt)
                             if (subAgt.agt == agtName) {
                                 subAgt.topics.push(topic)
+
+                                //find duplicate topic
+                                subAgt.topicsID.push({id: topicID, topic: topic})
                             }
                         }
                     }
                 }
             }
+
+            for (let subAgt of agreementList) {
+                subAgt.topicsID.sort((a, b) => {
+                    if (a.topic < b.topic) return -1;
+                    if (a.topic > b.topic) return 1;
+                    return 0;
+                });
+
+                subAgt.topics.sort();
+            }
+
+            //find duplicate topics
+            topicList.sort((a, b) => {
+                    if (a.topic < b.topic) return -1;
+                    if (a.topic > b.topic) return 1;
+                    return 0;
+                });
+            console.log(topicList)
+
+            let topicMap = {};
+
+            // Build the map
+            for (let item of topicList) {
+                if (!topicMap[item.topic]) {
+                    topicMap[item.topic] = [];
+                }
+                if (!topicMap[item.topic].includes(item.id)) {
+                    topicMap[item.topic].push(item.id);
+                }
+            }
+
+            // Find topics with more than one unique id
+            let duplicateTopics = Object.keys(topicMap).filter(topic => topicMap[topic].length > 1);
+
+            // Extract the items from topicList based on the duplicate topics
+            let duplicates = topicList.filter(item => duplicateTopics.includes(item.topic));
+
+            console.log(duplicates);
+
+
+
 
         // sort the arrary by date descending order
         agreementList.sort(function(a, b) {

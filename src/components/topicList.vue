@@ -48,6 +48,7 @@ export default {
     },
 
     mounted() {
+        console.log(this.agtTopicList)
         this.topicsCount = this.agtTopicList.length
 
         //if user enter agt page by clicking the topic in counrty page, set the selected topic style here
