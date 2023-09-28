@@ -1,5 +1,5 @@
 <template>
-  <!-- <trackerHeader /> -->
+  <trackerHeader />
 
   <div class="country-layout">
     <el-container>
@@ -13,19 +13,12 @@
         </el-header>
 
       <el-container>
-        <!-- <el-aside width="435px">
 
-        <asideFilter
-            v-for="(filters, i) in filterList"
-            :key = "i"
-            :allOptions="filters.value"
-            :title="filters.title"
-            :allAgt="allAgt"
-            @changeDisplayList="changeDisplayList"
-        />
-        </el-aside> -->
+        <el-aside width="50%">
+            <topicByCategoryList :topicByCategory="this.topicByCategory" :countryName="this.countryName"/>
+        </el-aside>
 
-        <!-- <el-divider direction="vertical"></el-divider> -->
+        <el-divider direction="vertical"></el-divider>
 
         <el-main>
             <div style="display: flex; flex-direction: row; align-items: center;">
@@ -65,18 +58,18 @@
 <script>
 import { useRoute } from 'vue-router'
 
-// import trackerHeader from '@/components/trackerHeader.vue'
+import trackerHeader from '@/components/trackerHeader.vue'
 // import trackerFooter from '@/components/trackerFooter.vue'
-// import asideFilter from '@/components/asideFilter.vue'
 import countryHeader from '@/components/countryHeader.vue'
 import docList from '@/components/docList.vue'
+import topicByCategoryList from '@/components/topicByCategoryList.vue'
 
 // 导入数据
 import countries from '@/data/countries.json'
 
 export default ({
     components: {
-        countryHeader, docList
+        countryHeader, docList, topicByCategoryList, trackerHeader
     },
 
     data() {
@@ -104,7 +97,11 @@ export default ({
             currentPage: 1,
 
             //sort by date
-            reverse: '1'
+            reverse: '1',
+
+            // topicByCategory: this.topicByCategory
+            // activeCategory: [],
+            // activeSubcategory: {}
         }
     },
 
@@ -159,6 +156,8 @@ export default ({
         let yearOptions = []
         // let agtTimeExact = ''
 
+        let topicByCategory = []
+
         let agtList = []
         for (let item of data.topics) {
                 topic = item.text
@@ -167,7 +166,51 @@ export default ({
                 // find duplicate topic
                 topicID = item.id
                 topicList.push({"id": topicID, "topic": topic})
+
+                // get the topic category
+                // topicByCategory = [{categoryLabel: "", subcategories: [{label:"s", topicList: ["a", "b"]}]}, }]
                 
+                const categoryLabel = item.category[0];
+                const subcategoryLabel = item.subcategory[0];
+
+                // search and match category
+                let categoryEntry = null;
+                for (let category of topicByCategory) {
+                    if (category.categoryLabel === categoryLabel) {
+                    categoryEntry = category;
+                    break;
+                    }
+                }
+
+                // create category
+                if (categoryEntry === null) {
+                    categoryEntry = {
+                    categoryLabel: categoryLabel,
+                    subcategories: []
+                    };
+                    topicByCategory.push(categoryEntry);
+                }
+
+                // search and match subcategory
+                let subcategoryEntry = null;
+                for (let subcategory of categoryEntry.subcategories) {
+                    if (subcategory.label === subcategoryLabel) {
+                    subcategoryEntry = subcategory;
+                    break;
+                    }
+                }
+
+                // create subcategory
+                if (subcategoryEntry === null) {
+                    subcategoryEntry = {
+                    label: subcategoryLabel,
+                    topicList: []
+                    };
+                    categoryEntry.subcategories.push(subcategoryEntry);
+                }
+
+                // Add the topic text to the subcategory's topicList
+                subcategoryEntry.topicList.push({id: item.id, topic: item.text});
 
                 for (let agt of item.agreements){
                     agtName = agt.name
@@ -221,7 +264,7 @@ export default ({
                     if (a.topic > b.topic) return 1;
                     return 0;
                 });
-            console.log(topicList)
+            // console.log(topicList)
 
             let topicMap = {};
 
@@ -240,11 +283,7 @@ export default ({
 
             // Extract the items from topicList based on the duplicate topics
             let duplicates = topicList.filter(item => duplicateTopics.includes(item.topic));
-
             console.log(duplicates);
-
-
-
 
         // sort the arrary by date descending order
         agreementList.sort(function(a, b) {
@@ -253,8 +292,10 @@ export default ({
 
             })
 
+        console.log(topicByCategory);
+        
         return {
-            countryName, data, agreementList, topicOptions, yearOptions
+            countryName, data, agreementList, topicOptions, yearOptions, topicByCategory
         }
     }
 })
@@ -275,8 +316,6 @@ export default ({
 }
 
 .country-layout .el-main {
-    /* padding-left: 40px;
-    padding-right: 60px; */
     padding: 0px 5%;
     background-color: white;
     display: block;
@@ -286,8 +325,42 @@ export default ({
 
 .country-layout .el-aside {
   background-color: white;
+  padding: 0px 5%;
+  display: block;
+  text-align: left;
 }
 
+.topic-collapse-container {
+    margin-top: 80px;
+    padding: 20px;
+}
+
+::v-deep .outer-collapse .el-collapse-item__header {
+  font-size: 1.3em; 
+  margin: 10px 0;
+  color: black;
+}
+
+::v-deep .outer-collapse .el-collapse-item__content {
+  font-size: 1.1em; 
+}
+
+/* Inner Collapse */
+::v-deep .inner-collapse {
+  padding-left: 20px;
+}
+
+::v-deep .inner-collapse .el-collapse-item__header {
+  font-size: 1em; 
+}
+
+::v-deep .inner-collapse .el-collapse-item__content {
+  font-size: 0.9em; 
+}
+
+::v-deep .topic-link {
+    display: block;
+}
 
 .paginationClass {
     position: relative;

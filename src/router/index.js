@@ -21,6 +21,11 @@ const routes = [
     path: '/agreement',
     name: 'agreement',
     component: () => import('../views/AgtView.vue')
+  },
+  {
+    path: '/topic',
+    name: 'topic',
+    component: () => import('../views/TopicView.vue')
   }
 ]
 

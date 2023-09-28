@@ -24,8 +24,6 @@ import trackerFooter from '@/components/trackerFooter.vue'
 
 export default {
   components: { trackerHeader, trackerFooter}
-
-
 }
 
-    </script>
+</script>

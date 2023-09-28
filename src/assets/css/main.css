@@ -1,0 +1,41 @@
+body { 
+    font-family: 'Inter', 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS';
+    margin: 0px;
+    padding: 0px;
+    text-align: left;
+    font-size: 1em;
+}
+
+h1.home-title {
+    font-size: 40px;
+}
+
+/* PeaceRep header */
+.el-header {
+    background-color: #FAFAFA;
+    padding: 10px 20px;
+    height: auto;
+  }
+  
+.common-layout .el-main { background-color: white; }
+.common-layout .el-footer { background-color: #FAFAFA; }
+.header-links { float: right; }
+.pp-logo { display: inline-block; height: 50px; }
+.header-logo { float: left; }
+
+/* SearchBox in Homepage */
+
+
+/* Intro Cards in Homepage */
+section.intro-cards { margin: 50px 10px; }
+  
+.card-title {
+    font-size: 22px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.image-holder {
+display: grid;
+place-items:center;
+}

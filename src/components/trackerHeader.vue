@@ -27,12 +27,3 @@ export default ({
     }
 })
 </script>
-
-
-<style scoped>
-.el-header {
-  background-color: #FAFAFA;
-  padding: 10px 20px;
-  height: auto;
-}
-</style>

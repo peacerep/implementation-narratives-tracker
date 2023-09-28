@@ -4,6 +4,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as icons from '@element-plus/icons-vue'
 
+import '@/assets/css/main.css'
 import '@/assets/css/font.css'
 
 import App from './App.vue'

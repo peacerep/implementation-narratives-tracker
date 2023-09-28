@@ -1,5 +1,5 @@
 <template>
-<section>
+<section class="intro-cards">
   <el-row class="row-bg" justify="center" :gutter="30">
     <el-col
       v-for="o in 2"
@@ -20,20 +20,3 @@
   </el-row>
 </section>
 </template>
-
-<style scoped>
-section {
-  margin: 50px 10px;
-}
-
-.card-title {
-    font-size: 22px;
-    text-align: left;
-    font-weight: 500;
-}
-
-.image-holder {
-  display: grid;
-  place-items:center;
-}
-</style>
