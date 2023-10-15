@@ -1,5 +1,6 @@
 <template>
     <h2>Explore by Topics</h2>
+    <el-scrollbar height="80vh">
     <div class="topic-collapse-container">
             <el-collapse class="outer-collapse" v-model="activeCategory" accordion>
             <el-collapse-item
@@ -31,6 +32,7 @@
             </el-collapse-item>
             </el-collapse>
         </div>
+    </el-scrollbar>
 </template>
 
 <script>

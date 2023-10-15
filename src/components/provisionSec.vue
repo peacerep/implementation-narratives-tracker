@@ -38,7 +38,7 @@
             </el-col>
         </el-row>
 
-    <!-- trying the collapse -->
+    <!-- the collapse -->
     <el-row justify="center" :gutter="30" class="section-wrapper">
         <el-col :span="12">
             <!-- loop the provisions -->

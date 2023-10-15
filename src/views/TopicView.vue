@@ -19,71 +19,103 @@
     <div class="tracker">
         <!-- agreement loop -->
         <div class="section-wrapper"
-            v-for="agt in this.topicData.agreements"
-            :key="agt">
-            <div>
-                <p>Agreement</p>
-                <h2>{{ agt.name }}</h2>
+            v-for="agt in sortedAgreements"
+            :key="agt.id">
+            <div @click="toggleAgreement(agt)" class="agreement-container">
+                <div class="date-column">
+                    <p class="date-column-ddmm">{{ formatDate(agt.date).dayMonth }}</p>
+                    <p class="date-column-yyyy">{{ formatDate(agt.date).year }}</p>
+                </div>
+                <div class="info-column">
+                    <h2 class="agt-in-topic">{{ agt.name }}</h2>
+                    <p>{{ getPaxData(agt.id).agtDescription }}</p>
+                </div>
             </div>
+
             
-            <div class="provision" v-for="provision in agt.provisions" :key="provision">
-                <el-row justify="center" :gutter="30" class="section-wrapper">
-                <el-col :span="12">
-                    <h3>Provisions</h3>
-                    <div class="text-container">
-                        <p>{{ provision.text }}</p>
-                    </div>
-                </el-col>
-
-                <el-col :span="12">
-                    <h3>Reports</h3>
-                    <el-timeline class="timeline">
-                        <el-timeline-item
-                            v-for="report in provision.reports"
-                            :key="report"
-
-                            placement="top">
-                            <el-card>
-                                <h3>{{ report.name }}</h3>
-                                <div class="source-wrapper">
-                                    <p class="repo-source">Source: {{ report.organisation }}</p>
-                                    <!-- <el-button 
-                                        round size="small">
-                                        Open Full Report
-                                    </el-button> -->
-                                </div>
-                                <div
-                                    v-for="segment in report.segments"
-                                    :key="segment"
-                                    class="segment-container"
-                                    >
-                                    <div>
-                                    <el-row class="segment-wrapper">
-                                        <el-col :span="22">
-                                            <p class="segment-text">{{ segment.text }}</p>
-                                        </el-col>
-                                        <el-col :span="2">
-                                            <div v-if="segment.polarity > 0">
-                                            <el-tag effect="plain" type="success" size="small" round>
-                                            positive
-                                            </el-tag></div>
-                                        <div v-else-if="segment.polarity < 0">
-                                            <el-tag effect="plain" type="danger" size="small" round>
-                                            negative
-                                            </el-tag></div>
-                                        <div v-else>
-                                            <el-tag effect="plain" type="info" size="small" round>
-                                            neutral
-                                            </el-tag></div>
-                                        </el-col>
-                                    </el-row>
-                                    </div>
-                                </div>
-                            </el-card>
-                        </el-timeline-item>
-                    </el-timeline>
-                </el-col>
+            <div v-if="selectedAgreementId === agt.id" class="provision-container">
+                <el-divider></el-divider>
+                <el-row justify="center" :gutter="15" class="section-wrapper">
+                    <el-col :span="12">
+                        <h3>Agreement Provisions</h3>
+                        <p class="counters" style="font-style: italic;">Click provision to view/fold</p>
+                        </el-col>
+                    <el-col :span="12">
+                        <h3>Implementation Instances</h3>
+                        <p class="counters" style="font-style: italic;">Since agreement signed</p>
+                    </el-col>
                 </el-row>
+
+                <div class="provision" v-for="(provision, index) in agt.provisions" :key="provision">
+                    <el-row justify="center" :gutter="15" class="section-wrapper">
+                    <el-col :span="12">
+                        <!-- <h3>Provisions</h3> -->
+                        <div class="text-container">
+                            <p class="agt-extracts"
+                                :class="{changeStyle:changeStyleIndex == index}"
+                                @click="toggleProvision(provision.number)">
+                                ...{{ provision.text }}...
+                            </p>
+                            <el-button 
+                                round size="small"
+                                v-if="selectedProvisionNumber === provision.number">
+                                Locate in Agreement
+                            </el-button>
+                        </div>
+                    </el-col>
+
+                    <el-col :span="12" style="padding: 20px 0px;">
+                        <!-- <h3>Reports</h3> -->
+                        <el-scrollbar max-height="80vh" v-if="selectedProvisionNumber === provision.number">
+                            <el-timeline class="timeline">
+                                <el-timeline-item
+                                    v-for="report in provision.reports"
+                                    :key="report"
+                                    :timestamp="computeTimeDif(report.date, agt.date)"
+                                    placement="top">
+                                    <el-card>
+                                        <h3>{{ report.name }}</h3>
+                                        <div class="source-wrapper">
+                                            <p class="repo-source">Source: {{ report.organisation }}</p>
+                                            <el-button 
+                                                round size="small" style="margin-left: 10px;">
+                                                Open Full Report
+                                            </el-button>
+                                        </div>
+                                        <div
+                                            v-for="segment in report.segments"
+                                            :key="segment"
+                                            class="segment-container"
+                                            >
+                                            <div>
+                                            <el-row class="segment-wrapper">
+                                                <el-col :span="22">
+                                                    <p class="segment-text">{{ segment.text }}</p>
+                                                </el-col>
+                                                <el-col :span="2">
+                                                    <div v-if="segment.polarity > 0">
+                                                    <el-tag effect="plain" type="success" size="small" round>
+                                                    positive
+                                                    </el-tag></div>
+                                                <div v-else-if="segment.polarity < 0">
+                                                    <el-tag effect="plain" type="danger" size="small" round>
+                                                    negative
+                                                    </el-tag></div>
+                                                <div v-else>
+                                                    <el-tag effect="plain" type="info" size="small" round>
+                                                    neutral
+                                                    </el-tag></div>
+                                                </el-col>
+                                            </el-row>
+                                            </div>
+                                        </div>
+                                    </el-card>
+                                </el-timeline-item>
+                            </el-timeline>
+                        </el-scrollbar>
+                    </el-col>
+                    </el-row>
+                </div>
             </div>
         </div>
     </div>
@@ -99,9 +131,25 @@ import trackerHeader from '@/components/trackerHeader.vue'
 import trackerFooter from '@/components/trackerFooter.vue'
 
 import countries from '@/data/countries.json'
+import PAX from '@/data/agt_description_links.json'
+
 
 export default {
     components: { trackerHeader, trackerFooter},
+
+    data() {
+        return {
+            changeStyleIndex: '',
+            provisionClicked: '',
+            displayed: [],
+            reportDate: "",
+            reportCounter: 0,
+
+            selectedAgreementId: null,
+            selectedProvisionNumber: null,
+            hoveredReportID: null
+        }
+    },
 
     methods: {
         home(){
@@ -116,7 +164,112 @@ export default {
                 }
             })
         },
+
+        changeStyle(index){
+            this.changeStyleIndex = index
+        },
+
+        toggleAgreement(agt) {
+            if (this.selectedAgreementId === agt.id) {
+                this.selectedAgreementId = null; // fold the currently open agreement
+            } else {
+                this.selectedAgreementId = agt.id; 
+            }
+        },
+
+        toggleProvision(provisionNumber) {
+            if (this.selectedProvisionNumber === provisionNumber) {
+                this.selectedProvisionNumber = null;
+            } else {
+                this.selectedProvisionNumber = provisionNumber;
+            }
+        },
+
+        formatDate(dateInt) {
+            const dateStr = String(dateInt);
+            const year = dateStr.substring(0, 4);
+            const month = parseInt(dateStr.substring(4, 6), 10) - 1; 
+            const day = dateStr.substring(6, 8);
+
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const monthName = monthNames[month];
+
+            return {
+                dayMonth: `${day} ${monthName}`,
+                year: year
+            };
+        },
+
+        getPaxData(agtID) {
+            let paxLink = '';
+            let agtDescription = '';
+
+            for (let item of PAX) {
+                if (agtID == item.agreementID) {
+                    paxLink = item.hyperlink_pax;
+                    agtDescription = item.description;
+                    break;
+                }
+            }
+
+            return {
+                paxLink: paxLink,
+                agtDescription: agtDescription
+            };
+        },
+
+
+        computeTimeDif(reportDateInt, agtDateInt) {
+            const convertToDate = (dateInt) => {
+                const dateStr = String(dateInt);
+                const year = dateStr.substring(0, 4);
+                const month = dateStr.substring(4, 6) - 1;
+                const day = dateStr.substring(6, 8);
+                return new Date(year, month, day);
+            };
+
+            const repoDate = convertToDate(reportDateInt);
+            const agtDate = convertToDate(agtDateInt);
+
+            const monthDiff = repoDate.getMonth() - agtDate.getMonth();
+            const yearDiff = repoDate.getFullYear() - agtDate.getFullYear();
+            const difference = monthDiff + yearDiff * 12;
+
+            let timeDif, month, year = '';
+            let yearNum, monthNum = 0;
+
+            yearNum = Math.floor(difference / 12);
+            year = yearNum === 1 ? yearNum + ' year ' : yearNum + ' years ';
+
+            monthNum = difference - yearNum * 12;
+            month = monthNum === 1 ? monthNum + ' month ' : monthNum === 0 ? '' : monthNum + ' months ';
+
+            if (difference >= 12) {
+                timeDif = year + month + 'after agreement';
+            } else if (difference > 0 && difference < 12) {
+                timeDif = month + 'after agreement';
+            } else {
+                const dayDiff = repoDate.getDate() - agtDate.getDate();
+                timeDif = dayDiff + ' days after agreement';
+            }
+
+            const formattedRepoDate = `${repoDate.getFullYear()}-${String(repoDate.getMonth() + 1).padStart(2, '0')}-${String(repoDate.getDate()).padStart(2, '0')}`;
+            const timeDisplay = formattedRepoDate + ' | ' + timeDif;
+
+            return timeDisplay;
+        },
+
+
     },
+
+    computed: {
+    sortedAgreements() {
+        return this.topicData.agreements.slice().sort((a, b) => {
+            return b.date - a.date;
+            // return a.date - b.date;
+        });
+    }
+},
 
     setup() {
         const $route = useRoute()
@@ -144,7 +297,6 @@ export default {
                         // topic = item.text
                         
                         topicData = item
-
                         // provision = item.provisions
                         
                     }
@@ -228,12 +380,8 @@ h3 {
 }
 
 .section-wrapper {
-    margin: 0px 50px;
+    margin: 0px 0px;
     text-align: left;
-}
-
-.section-wrapper {
-    margin: 0px 50px;
 }
 
 .segment-text {
@@ -269,5 +417,64 @@ h3 {
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.agt-extracts {
+    color: black;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.agt-extracts:hover {
+    color: grey;
+    cursor: pointer;
+}
+
+.agt-in-topic {
+    padding-top: 0;
+    margin: 0px 0px 10px 0px;
+}
+
+.agt-in-topic:hover{
+    cursor:pointer
+}
+
+.agreement-container {
+    display: flex;
+    align-items: flex-start;
+    margin: 40px 10px 10px 10px;
+}
+
+.provision-container {
+    margin: 0px 25px;
+}
+
+.date-column {
+    width: 80px;
+    flex-shrink: 0;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.info-column {
+    flex-grow: 1;
+    padding-left: 10px; 
+}
+
+.date-column-ddmm {
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    padding: 3px 0;
+    margin: 0;
+    border-bottom: 1px solid gray;
+}
+
+.date-column-yyyy {
+    font-size: 24px;
+    font-weight: 800;
+    font-style: italic;
+    padding: 3px 0;
+    margin: 0;
 }
 </style>

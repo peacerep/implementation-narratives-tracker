@@ -13,7 +13,6 @@
         </el-header>
 
       <el-container>
-
         <el-aside width="50%">
             <topicByCategoryList :topicByCategory="this.topicByCategory" :countryName="this.countryName"/>
         </el-aside>
@@ -45,7 +44,6 @@
                 @current-change="currentChange"
             ></el-pagination>
             </div>
-
         </el-main>
 
       </el-container>
@@ -64,7 +62,7 @@ import countryHeader from '@/components/countryHeader.vue'
 import docList from '@/components/docList.vue'
 import topicByCategoryList from '@/components/topicByCategoryList.vue'
 
-// 导入数据
+// import data
 import countries from '@/data/countries.json'
 
 export default ({
@@ -77,7 +75,7 @@ export default ({
             title: this.countryName,
             dataListDisplayed: this.agreementList,
 
-            //父组件传data给filter
+            //parent component pass data to filter
             allAgt: this.agreementList,
             allOptions: this.topicOptions,
 
@@ -328,6 +326,7 @@ export default ({
   padding: 0px 5%;
   display: block;
   text-align: left;
+  overflow: hidden;
 }
 
 .topic-collapse-container {
