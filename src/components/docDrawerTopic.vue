@@ -9,7 +9,7 @@
 var tmp_id = -1;
 
 export default ({
-    props: ["id", "docDrawerOpen", "country"],
+    props: ["id", "docDrawerOpen", "country", "agtId", "agtName"],
 
     data() {
         return {
@@ -20,11 +20,29 @@ export default ({
     },
 
     methods: {
+        loadDocument() {
+            this.agt = this.agtId;
+            this.title = this.agtName;
+
+            let countryName = this.country;
+            let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase();
+
+            let xhr = new XMLHttpRequest();
+            const url = './docsHtml/'+countryFolderName+'/agreements/'+this.agt+".html";
+            // console.log("docDrawer", url);
+            xhr.open("GET", url, false);
+            xhr.setRequestHeader('Content-type', 'text/html');
+            xhr.send();
+            this.document = xhr.response;
+        },
+
         do_highlight(id) {
+            // console.log("do highlight triggered")
             tmp_id = id
             let highlightQuerry = "div[id='doc'] a[id='" + tmp_id + "']"
             let selected = document.querySelector(`${highlightQuerry}`)
             selected.style.background = "yellow";
+            // console.log("do highllight", selected)
         },
 
         clear_highlight() {
@@ -45,22 +63,10 @@ export default ({
     },
 
     created() {
-        let countryName = this.country
-        let countryFolderName = countryName.replace(/\s+/g, "_").toLowerCase();
-        this.agt = this.$attrs.agtID
-        this.title = this.$attrs.agtName
-        
-		// Synchronous request
-        let xhr = new XMLHttpRequest();
-        const url = './docsHtml/'+countryFolderName+'/agreements/'+this.agt+".html"
-        // console.log("docDrawer", url)
-		xhr.open("GET", url, false);
-		xhr.setRequestHeader('Content-type', 'text/html');
-		xhr.send();
-        this.document = xhr.response
+        this.loadDocument()
     },
 
-    mounted() { 
+    mounted() {
         this.do_highlight(this.id)
         this.force_scrolling(this.id)
     },
@@ -68,9 +74,14 @@ export default ({
     watch: {
         'docDrawerOpen': function() {
             if ( this.docDrawerOpen ==  true) {
-                this.clear_highlight()
-                this.do_highlight(this.id)
-                this.force_scrolling(this.id)
+                this.loadDocument()
+
+                this.$nextTick(() => {
+                    this.clear_highlight()
+                    // console.log("data changed")
+                    this.do_highlight(this.id)
+                    this.force_scrolling(this.id)
+                })
             }
         }
     }

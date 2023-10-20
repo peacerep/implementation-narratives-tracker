@@ -64,9 +64,9 @@ export default ({
         }
     },
 
-    mounted() {
-        console.log(this.dataListDisplayed)
-    }
+    // mounted() {
+    //     console.log(this.dataListDisplayed)
+    // }
 })
 </script>
 

@@ -79,7 +79,7 @@ export default ({
             }
             this.topicProvisionCounter = subProvisionCounter
             this.selectedProvisions = tmpArr
-            console.log(this.selectedProvisions)
+            // console.log(this.selectedProvisions)
         },
 
         toCountryView(country) {

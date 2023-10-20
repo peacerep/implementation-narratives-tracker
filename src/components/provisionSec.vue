@@ -491,7 +491,7 @@ export default ({
                 }
             }
 
-            console.log("reportID", reportId)
+            // console.log("reportID", reportId)
 
             var segmentIds = []
             for ( let segment of this.selectedReport.segments) {

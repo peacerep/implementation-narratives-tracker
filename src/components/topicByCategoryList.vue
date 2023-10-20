@@ -2,7 +2,7 @@
     <h2>Explore by Topics</h2>
     <el-scrollbar height="80vh">
     <div class="topic-collapse-container">
-            <el-collapse class="outer-collapse" v-model="activeCategory" accordion>
+        <el-collapse class="outer-collapse" v-model="activeCategory" accordion>
             <el-collapse-item
                 v-for="(category, categoryIndex) in this.topicByCategory"
                 :key="categoryIndex"
@@ -30,7 +30,7 @@
                 </el-collapse-item>
                 </el-collapse>
             </el-collapse-item>
-            </el-collapse>
+        </el-collapse>
         </div>
     </el-scrollbar>
 </template>
@@ -49,7 +49,7 @@ export default ({
 
     methods: {
         toTopicView(topic, country) {
-            console.log(topic)
+            // console.log(topic)
             this.$router.push({
                 name: `topic`,
                 query: {

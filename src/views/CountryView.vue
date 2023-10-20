@@ -106,7 +106,7 @@ export default ({
     methods: {
         changeDisplayList(newList) {
             this.dataListDisplayed = newList
-            console.log("displayed", this.dataListDisplayed)
+            // console.log("displayed", this.dataListDisplayed)
         },
 
         currentChange(current) {
@@ -290,7 +290,7 @@ export default ({
 
             })
 
-        console.log(topicByCategory);
+        // console.log(topicByCategory);
         
         return {
             countryName, data, agreementList, topicOptions, yearOptions, topicByCategory

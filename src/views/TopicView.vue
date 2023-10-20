@@ -13,6 +13,7 @@
         </div>
 
         <h1>{{ this.topicText }}</h1>
+        <p>Click agreement to explore implementation.</p>
     </div>
 
 
@@ -58,7 +59,8 @@
                             </p>
                             <el-button 
                                 round size="small"
-                                v-if="selectedProvisionNumber === provision.number">
+                                v-if="selectedProvisionNumber === provision.number"
+                                @click="openDrawer(provision.number, selectedAgreementId, agt.name)">
                                 Locate in Agreement
                             </el-button>
                         </div>
@@ -78,7 +80,8 @@
                                         <div class="source-wrapper">
                                             <p class="repo-source">Source: {{ report.organisation }}</p>
                                             <el-button 
-                                                round size="small" style="margin-left: 10px;">
+                                                round size="small" style="margin-left: 10px;"
+                                                @click="openReportDrawer(report.id, report)">
                                                 Open Full Report
                                             </el-button>
                                         </div>
@@ -119,6 +122,25 @@
             </div>
         </div>
     </div>
+
+    <!-- Agreement Full Text -->
+    <el-drawer
+    v-model="docDrawerOpen"
+    :direction="direction"
+    title="Agreement full text"
+    size="45%"
+    >
+        <docDrawerTopic ref="docDrawer" :agtId="this.selectedAgreementId" :agtName="this.clickedAgt" :id="this.segement_id" :docDrawerOpen="docDrawerOpen" :country="this.countryName"/>
+    </el-drawer>
+
+    <!-- Report Full Text -->
+    <el-drawer
+        v-model="reportDrawerOpen"
+        title="Report full text"
+        size="45%"
+        >
+        <reportDrawerTopic :report="this.selectedReport" :reportDrawerOpen="reportDrawerOpen" :allIDs="allIDs" :country="this.countryName" />
+    </el-drawer>
     
     
     <trackerFooter />
@@ -129,13 +151,15 @@ import { useRoute } from 'vue-router'
 
 import trackerHeader from '@/components/trackerHeader.vue'
 import trackerFooter from '@/components/trackerFooter.vue'
+import docDrawerTopic from '@/components/docDrawerTopic.vue'
+import reportDrawerTopic from '@/components/reportDrawerTopic.vue'
 
 import countries from '@/data/countries.json'
 import PAX from '@/data/agt_description_links.json'
 
 
 export default {
-    components: { trackerHeader, trackerFooter},
+    components: { trackerHeader, trackerFooter, docDrawerTopic, reportDrawerTopic},
 
     data() {
         return {
@@ -147,7 +171,22 @@ export default {
 
             selectedAgreementId: null,
             selectedProvisionNumber: null,
-            hoveredReportID: null
+            hoveredReportID: null,
+
+            //for the drawer
+            buttonVisible: 0,
+            docDrawerOpen: false,
+            doc_id: 0,
+            segement_id: 0,
+            direction: 'ltr',
+            agt_id: 0,
+            clickedAgt: "",
+
+            //for the report drawer
+            reportbuttonVisible: 999,
+            reportDrawerOpen: false,
+            selectedReport: [],
+            allIDs: []
         }
     },
 
@@ -182,6 +221,7 @@ export default {
                 this.selectedProvisionNumber = null;
             } else {
                 this.selectedProvisionNumber = provisionNumber;
+                // console.log("click", provisionNumber)
             }
         },
 
@@ -217,7 +257,6 @@ export default {
                 agtDescription: agtDescription
             };
         },
-
 
         computeTimeDif(reportDateInt, agtDateInt) {
             const convertToDate = (dateInt) => {
@@ -258,6 +297,26 @@ export default {
 
             return timeDisplay;
         },
+
+        openDrawer(id, agtid, agtname ) {
+            this.docDrawerOpen = true,
+            this.segement_id = id,
+            this.agt_id = agtid
+            this.clickedAgt = agtname
+            // console.log("open drawer", id, agtid, agtname)
+        },
+
+        openReportDrawer(reportId, reportData) {
+            this.reportDrawerOpen = true
+            this.selectedReport = reportData
+            // console.log("reportID", reportId)
+
+            var segmentIds = []
+            for ( let segment of this.selectedReport.segments) {
+                segmentIds.push(segment.number) 
+            }
+            this.allIDs = segmentIds
+        }
 
 
     },
@@ -443,6 +502,15 @@ h3 {
     display: flex;
     align-items: flex-start;
     margin: 40px 10px 10px 10px;
+    transition: box-shadow 0.3s ease;
+}
+
+.agreement-container:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 20px -20px;
+}
+
+.agreement-container:hover .agt-in-topic {
+    text-decoration: underline;
 }
 
 .provision-container {
