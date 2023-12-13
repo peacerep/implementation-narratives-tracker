@@ -20,6 +20,7 @@
         <el-divider direction="vertical"></el-divider>
 
         <el-main>
+            <h2>Explore by Agreement</h2>
             <div style="display: flex; flex-direction: row; align-items: center;">
                 <p style="padding: 0px 10px;">Sort by:</p>
                 <el-radio-group 
@@ -91,7 +92,7 @@ export default ({
             ],
 
             //page split
-            sizePerPage: 6,
+            sizePerPage: 5,
             currentPage: 1,
 
             //sort by date
@@ -152,7 +153,10 @@ export default ({
         let agtName = ''
         let agtID = ''
         let yearOptions = []
-        // let agtTimeExact = ''
+
+        //temp: for agtlist showing categories
+        let cat = ""
+        let subCat = ""
 
         let topicByCategory = []
 
@@ -164,9 +168,6 @@ export default ({
                 // find duplicate topic
                 topicID = item.id
                 topicList.push({"id": topicID, "topic": topic})
-
-                // get the topic category
-                // topicByCategory = [{categoryLabel: "", subcategories: [{label:"s", topicList: ["a", "b"]}]}, }]
                 
                 const categoryLabel = item.category[0];
                 const subcategoryLabel = item.subcategory[0];
@@ -179,7 +180,6 @@ export default ({
                     break;
                     }
                 }
-
                 // create category
                 if (categoryEntry === null) {
                     categoryEntry = {
@@ -188,7 +188,6 @@ export default ({
                     };
                     topicByCategory.push(categoryEntry);
                 }
-
                 // search and match subcategory
                 let subcategoryEntry = null;
                 for (let subcategory of categoryEntry.subcategories) {
@@ -197,7 +196,6 @@ export default ({
                     break;
                     }
                 }
-
                 // create subcategory
                 if (subcategoryEntry === null) {
                     subcategoryEntry = {
@@ -206,9 +204,15 @@ export default ({
                     };
                     categoryEntry.subcategories.push(subcategoryEntry);
                 }
-
                 // Add the topic text to the subcategory's topicList
                 subcategoryEntry.topicList.push({id: item.id, topic: item.text});
+
+
+
+
+                //temp: find current category and subcategory
+                cat = item.category[0]
+                subCat = item.subcategory[0]
 
                 for (let agt of item.agreements){
                     agtName = agt.name
@@ -230,21 +234,47 @@ export default ({
                             yearOptions.push(YEAR)
                         }
 
-                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "topics": [topic], "topicsID": [{id: topicID, topic: topic}]})
+                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "categoryList": [{label: cat, subCategoryList: [subCat]}], "topics": [topic], "topicsID": [{id: topicID, topic: topic}]})
                     }
                     else {
                         for (let subAgt of agreementList) {
-                            // console.log(subAgt)
                             if (subAgt.agt == agtName) {
                                 subAgt.topics.push(topic)
-
-                                //find duplicate topic
                                 subAgt.topicsID.push({id: topicID, topic: topic})
+
+                                let categoryExists = false;
+                                // Iterate through existing categories to find if the current category exists
+                                for (let category of subAgt.categoryList) {
+                                    if (category.label == cat) {
+                                        categoryExists = true;
+                                        let subCategoryExists = false;
+                                        // Check if the subcategory already exists
+                                        for (let subcategory of category.subCategoryList) {
+                                            if (subcategory == subCat) {
+                                                subCategoryExists = true;
+                                                break;
+                                            }
+                                        }
+                                        // If subcategory does not exist, add it
+                                        if (!subCategoryExists) {
+                                            category.subCategoryList.push(subCat);
+                                        }
+                                        break;
+                                    }
+                                }
+                                // If the category does not exist, add it with the new subcategory
+                                if (!categoryExists) {
+                                    subAgt.categoryList.push({label: cat, subCategoryList: [subCat]});
+                                }
+                            
                             }
                         }
                     }
                 }
             }
+
+            // console.log("category entry", topicByCategory)
+        
 
             for (let subAgt of agreementList) {
                 subAgt.topicsID.sort((a, b) => {
@@ -283,14 +313,26 @@ export default ({
             let duplicates = topicList.filter(item => duplicateTopics.includes(item.topic));
             console.log(duplicates);
 
-        // sort the arrary by date descending order
-        agreementList.sort(function(a, b) {
-                // return new Date(b.date) - new Date(a.date);
-                return new Date(a.date) - new Date(b.date);
+            // sort the arrary by date descending order
+            agreementList.sort(function(a, b) {
+                    // return new Date(b.date) - new Date(a.date);
+                    return new Date(a.date) - new Date(b.date);
 
-            })
+                })
+        
+        for (let agreement of agreementList) {
+            let uniqueSubCats = new Set();
 
-        // console.log(topicByCategory);
+            for (let category of agreement.categoryList) {
+                for (let subCat of category.subCategoryList) {
+                    uniqueSubCats.add(subCat);
+                }
+            }
+            agreement.totalUniqueSubCats = uniqueSubCats.size;
+        } 
+        
+
+        // console.log("agreementList", agreementList);
         
         return {
             countryName, data, agreementList, topicOptions, yearOptions, topicByCategory
@@ -300,110 +342,16 @@ export default ({
 </script>
 
 <style scoped>
-.el-main{
-    /* height: 100vh; */
-    /* overflow:auto; */
-    background-color: burlywood;
-}
-.country-layout .el-header {
-  background-color: #F1F1F1;
-  padding: 10px 6%;
-  margin: 0px 0%;
-  height: auto;
-  /* border-bottom: 2px solid black; */
-}
-
-.country-layout .el-main {
-    padding: 0px 5%;
-    background-color: white;
-    display: block;
-    text-align: left;
+  /* .el-row {
+      margin-left: 50px;
+      margin-bottom: 10px;
+      align-items: flex-start;
+  } */
   
-}
-
-.country-layout .el-aside {
-  background-color: white;
-  padding: 0px 5%;
-  display: block;
-  text-align: left;
-  overflow: hidden;
-}
-
-.topic-collapse-container {
-    margin-top: 80px;
-    padding: 20px;
-}
-
-::v-deep .outer-collapse .el-collapse-item__header {
-  font-size: 1.3em; 
-  margin: 10px 0;
-  color: black;
-}
-
-::v-deep .outer-collapse .el-collapse-item__content {
-  font-size: 1.1em; 
-}
-
-/* Inner Collapse */
-::v-deep .inner-collapse {
-  padding-left: 20px;
-}
-
-::v-deep .inner-collapse .el-collapse-item__header {
-  font-size: 1em; 
-}
-
-::v-deep .inner-collapse .el-collapse-item__content {
-  font-size: 0.9em; 
-}
-
-::v-deep .topic-link {
-    display: block;
-}
-
-.paginationClass {
-    position: relative;
-    bottom: 0;
-    text-align: center;
-}
-
-.el-row {
-    margin-left: 50px;
-    margin-bottom: 10px;
-    align-items: flex-start;
-}
-
-.el-col {
-    column-rule: 4px dotted rgb(79, 185, 227);
-    border-radius: 4px;
-    align-items: flex-start;
-  
-}
-
-.el-divider--vertical{
-  display:inline-block;
-  width:1px;
-  height: 100vh;
-  margin:0 8px;
-  vertical-align:middle;
-  position:relative;
-}
-
-.country-title {
-    font-size: 16px;
-    font-weight: medium;
-    margin: 0px 5px;
-}
-
-.breadcrumb {
-    display: flex; 
-    flex-direction: row; 
-    align-items: center;
-    margin: 10px 0px;
-}
-
-.current-page {
-    font-style: italic;
-}
+  /* .el-col {
+      column-rule: 4px dotted rgb(79, 185, 227);
+      border-radius: 4px;
+      align-items: flex-start;
+  } */
 
 </style>

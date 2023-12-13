@@ -76,9 +76,3 @@ export default ({
     }
 })
 </script>
-
-<style scoped>
-.inner-drawer {
-    text-align: left;
-}
-</style>

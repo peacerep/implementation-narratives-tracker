@@ -26,6 +26,11 @@ const routes = [
     path: '/topic',
     name: 'topic',
     component: () => import('../views/TopicView.vue')
+  },
+  {
+    path: '/subCategoryList',
+    name: 'subCategoryList',
+    component: () => import('../views/subCategoryView.vue')
   }
 ]
 

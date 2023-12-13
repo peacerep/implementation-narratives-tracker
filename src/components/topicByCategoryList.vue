@@ -9,26 +9,19 @@
                 :title="category.categoryLabel"
                 :name="category.categoryLabel"
             >
-                <!-- Inner  -->
-                <el-collapse class="inner-collapse" v-model="activeSubcategory[categoryIndex]">
-                <el-collapse-item
+                <el-link
                     v-for="(subcategory, subcategoryIndex) in category.subcategories"
                     :key="subcategoryIndex"
                     :title="subcategory.label"
+                    class="topic-link"
+                    :underline="false"
                     :name="`${categoryIndex}-${subcategoryIndex}`"
-                >
-                    <!-- List of topics -->
-                    <el-link
-                        v-for="item of subcategory.topicList"
-                        :key="item.id"
-                        :underline="false"
-                        class="topic-link"
-                        @click="toTopicView(item, this.countryName)"
+                    @click="toSubCategoryView(subcategory, this.countryName)"
                     >
-                    {{ item.topic }}
+                {{ subcategory.label }}
                 </el-link>
-                </el-collapse-item>
-                </el-collapse>
+
+                
             </el-collapse-item>
         </el-collapse>
         </div>
@@ -58,7 +51,61 @@ export default ({
                     country: `${country}`,
                 }
             })
+        },
+
+        // toSubCategoryView(subCategoryTopic, country) {
+        //     console.log(subCategoryTopic)
+        //     this.$router.push({
+        //         name: `subCategoryTopic`,
+        //         query: {
+        //             id: `${subCategoryTopic}`,
+        //             topicText: `${subCategoryTopic.label}`,
+        //             country: `${country}`,
+        //         }
+        //     })
+        // }
+
+        toSubCategoryView(subCategoryTopic, country) {
+            console.log(subCategoryTopic, country)
+            this.$router.push({
+                name: `subCategoryList`,
+                query: {
+                    subCategory: `${subCategoryTopic.label}`,
+                    // topicList: `${subCategoryTopic.topicList}`,
+                    // topicList: JSON.stringify(subCategoryTopic.topicList),
+                    country: `${country}`
+                }
+            })
         }
     }
 })
 </script>
+
+<style scoped>
+::v-deep .outer-collapse .el-collapse-item__header {
+    font-size: 1.3em; 
+    margin: 10px 0;
+    color: black;
+  }
+  
+  ::v-deep .outer-collapse .el-collapse-item__content {
+    font-size: 1.1em; 
+  }
+  
+  /* Inner Collapse */
+  ::v-deep .inner-collapse {
+    padding-left: 20px;
+  }
+  
+  ::v-deep .inner-collapse .el-collapse-item__header {
+    font-size: 1em; 
+  }
+  
+  ::v-deep .inner-collapse .el-collapse-item__content {
+    font-size: 0.9em; 
+  }
+  
+  ::v-deep .topic-link {
+      display: block;
+  }
+</style>

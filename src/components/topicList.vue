@@ -48,12 +48,15 @@ export default {
     },
 
     mounted() {
-        // console.log(this.agtTopicList)
-        this.topicsCount = this.agtTopicList.length
+        // console.log("topic list", this.agtTopicList)
+        this.topicsCount = this.agtTopicList.size
+        // console.log("size", this.topicsCount)
 
         //if user enter agt page by clicking the topic in counrty page, set the selected topic style here
-        let topicIndex = this.agtTopicList.indexOf(this.selTopic)
-        this.changeStyleIndex = topicIndex
+        let topicIndex = Array.from(this.agtTopicList).indexOf(this.selTopic);
+        this.changeStyleIndex = topicIndex;
+
+        // console.log("topic box", this.topicsCount, this.changeStyleIndex)
     }
 }
 
@@ -61,66 +64,18 @@ export default {
 
 
 <style scoped>
-.topic-wrapper {
-    padding: 20px 5%;
-    /* background-color: #DDE4E8; */
-}
-
-.topic-sub-wrapper {
-    text-align: left;
-    background-color: #F1F1F1
-}
-
-.topic-title {
-    background-color: transparent;
-    font-weight: medium;
-    font-size: 18px;
-    margin-top: 0px;
-}
-
-/deep/ .el-collapse {
+::v-deep .el-collapse {
     padding: 0px 10px;
 }
-/deep/ .el-collapse .el-collapse-item {
+::v-deep .el-collapse .el-collapse-item {
   background-color: #F1F1F1
 }
-/deep/ .el-collapse-item .el-collapse-item__header{
+::v-deep .el-collapse-item .el-collapse-item__header{
   background-color: #F1F1F1;
   height: fit-content;
 }
-/deep/ .el-collapse-item .el-collapse-item__wrap {
+::v-deep .el-collapse-item .el-collapse-item__wrap {
   background-color: #F1F1F1
 }
 
-
-.changeStyle {
-    color: black;
-    font-weight: 600;
-}
-
-.el-link {
-    margin: 5px 0px;
-    display: block;
-}
-
-.title-line {
-    /* white-space: pre-line; */
-    padding: 0px;
-    margin: 5px 0px 0px 0px;
-    height: 30px;
-    line-height: 30px;
-  }
-
-.title-line:last-child {
-    /* white-space: pre-line; */
-    height: 20px;
-    line-height: 20px;
-    margin-bottom: 5px;
-}
-
-  .title-container {
-    display: flex;
-    flex-direction: column;
-    /* height: 60px; */
-  }
 </style>

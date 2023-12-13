@@ -39,3 +39,430 @@ section.intro-cards { margin: 50px 10px; }
 display: grid;
 place-items:center;
 }
+
+/* Universal Componnets */
+.agt-head {
+    text-align: left;
+    padding: 2vh 5%;
+}
+
+.breadcrumb {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+    margin: 10px 0px;
+}
+
+.country-title {
+    font-size: 16px;
+    font-weight: medium;
+    margin: 0px 5px;
+}
+
+.current-page {
+    font-style: italic;
+}
+
+
+/* Country Page */
+.country {
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.country h1 {
+    color: #000;
+    font-size: 42px;
+    margin: 0px;
+}
+
+.country p {
+    color: #000;
+    font-size: 18px;
+    font-weight: blod;
+    margin: 0px;
+}
+
+.country-layout .el-header {
+    background-color: #F1F1F1;
+    padding: 10px 6%;
+    margin: 0px 0%;
+    height: auto;
+  }
+  
+  .country-layout .el-main {
+      padding: 0px 5%;
+      background-color: white;
+      display: block;
+      text-align: left;
+  }
+  
+  .country-layout .el-aside {
+    background-color: white;
+    padding: 0px 5%;
+    display: block;
+    text-align: left;
+    overflow: hidden;
+  }
+
+  /* TopicCategory list style in component */
+  
+  .paginationClass {
+      position: relative;
+      bottom: 0;
+      text-align: center;
+  }
+  
+  .el-divider--vertical{
+    display:inline-block;
+    width:1px;
+    height: 100vh;
+    margin:0 8px;
+    vertical-align:middle;
+    position:relative;
+  }
+  
+  .agt-time {
+    font-size: 1em;
+    padding:0px 0px;
+    margin:5px 0px;
+}
+
+.doc-list {
+    margin: 30px 0px;
+    padding: 20px;
+    border-bottom: 1px solid lightgrey;
+}
+
+.doc-wrapper > .doc-list:first-of-type {
+    margin: 0px 0px;
+}
+
+.agt-link {
+    font-size: 1.3em;
+    color: black;
+    padding:0px 0px;
+    margin:0px 0px;
+}
+
+.agt-link:hover {
+    color: #409eff;
+}
+
+.topic-box {
+    background-color: aliceblue;
+    padding: 10px;
+    margin: 0px 0px 10px 0px;
+    width: 75%;
+}
+
+.topic-text {
+    font-size: 14px;
+    padding: 0px;
+    margin: 5px;
+}
+
+/* AgtView */
+
+h1.agt-title {
+    font-size: 28px;
+    margin: 0px 0px 10px 0px;
+}
+
+p.agt-des {
+    padding: 0px;
+    margin: 5px 0px;
+}
+.metric-wrapper {
+  margin: 10px 0px;
+}
+
+.info-wrapper {
+    margin: 0px 0px;
+}
+
+.metric-num {
+    font-size: 34px;
+    margin: 5px;
+}
+
+.metric-des {
+    font-size: 14px;
+    margin: 5px;
+}
+
+.flex-metrics {
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+}
+
+.mouse-hover :hover {
+    cursor: pointer;
+}
+
+.topic-wrapper {
+    padding: 20px 5%;
+}
+
+.topic-sub-wrapper {
+    text-align: left;
+    background-color: #F1F1F1
+}
+
+.topic-title {
+    background-color: transparent;
+    font-weight: medium;
+    font-size: 18px;
+    margin-top: 0px;
+}
+
+.changeStyle {
+    color: black;
+    font-weight: 600;
+}
+
+.topic-link {
+    margin: 5px 0px;
+    display: block;
+}
+
+.title-line {
+    padding: 0px;
+    margin: 5px 0px 0px 0px;
+    height: 30px;
+    line-height: 30px;
+  }
+
+.title-line:last-child {
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 5px;
+}
+
+.title-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+/* Document Drawers */
+.inner-drawer {
+    text-align: left;
+}
+
+.report-head h2 {
+    margin-bottom: 5px;
+}
+.inner-drawer {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.report-head {
+    text-align: left;
+    background-color: white;
+    position: sticky;
+    top: 0px;
+    border-bottom: 2px solid lightgray;
+}
+
+.switch-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;   
+}
+
+.button-wrapper {
+    padding-left: 10px;
+}
+
+
+/* Provisions and Reports */
+
+.agt-head h1 {
+    font-size: 28px;
+    margin: 0px 0px 10px 0px;
+}
+
+h3 {
+    padding: 0px;
+    margin: 0px;
+}
+
+.title {
+    text-align: center;
+    margin: 40px 50px 20px 50px;
+}
+
+.title h2 {
+    font-size: 24px;
+}
+
+.counters {
+    padding: 5px 5px;
+    margin: 0px;
+}
+
+.radio-group {
+    float: right;
+    padding: 5px 0px 5px 50px;
+}
+
+.text-container {
+    text-align: left;
+    margin: 0px 00px;
+}
+
+.provision-divider {
+    margin: 5px 0px;
+}
+
+.tracker {
+    margin: 0 5%;
+}
+
+.section-wrapper {
+    margin: 0px 50px;
+    text-align: left;
+
+}
+
+.segment-text {
+    margin: 0px 0px 0px 0px;
+    padding: 0px;
+}
+
+.segment-container {
+    margin-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+    border-bottom: 1.3px dashed #CFCFCF;
+}
+
+.segment-container:nth-last-child(1) {
+    border-bottom: none;
+}
+
+.timeline {
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+}
+.agt-extracts {
+    color: darkgray;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.agt-extracts:hover {
+    color: grey;
+    cursor: pointer;
+}
+
+.agt-extracts-topic {
+    color: black;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.agt-extracts-topic:hover {
+    color: grey;
+    cursor: pointer;
+}
+
+.changeStyle {
+    color: black;
+    font-weight: 600;
+}
+
+.repo-source {
+    margin: 0px;
+    padding: 5px 5px 5px 0px;
+}
+
+.source-wrapper {
+    padding-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.agt-in-topic {
+    padding-top: 0;
+    margin: 0px 0px 10px 0px;
+}
+
+.agt-in-topic:hover{
+    cursor:pointer
+}
+
+.agreement-container {
+    display: flex;
+    align-items: flex-start;
+    margin: 40px 10px 10px 10px;
+    transition: box-shadow 0.3s ease;
+}
+
+.agreement-container:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 20px -20px;
+}
+
+.agreement-container:hover .agt-in-topic {
+    text-decoration: underline;
+}
+
+.provision-container {
+    margin: 0px 25px;
+}
+
+.date-column {
+    width: 80px;
+    flex-shrink: 0;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.info-column {
+    flex-grow: 1;
+    padding-left: 10px; 
+}
+
+.date-column-ddmm {
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    padding: 3px 0;
+    margin: 0;
+    border-bottom: 1px solid gray;
+}
+
+.date-column-yyyy {
+    font-size: 24px;
+    font-weight: 800;
+    font-style: italic;
+    padding: 3px 0;
+    margin: 0;
+}
+
+
+.topic-container {
+    display: flex; 
+    justify-content: space-between;
+    flex-wrap: wrap; 
+    gap: 10px;
+    margin-bottom: 10px; 
+}
+
+.topic-container p {
+    margin: 0; 
+    font-size: 0.7em; 
+    background-color: #f2f2f2; 
+    padding: 5px; 
+    border-radius: 5px; 
+}
+
+.topic-container p:before {
+    content: "# "; 
+}

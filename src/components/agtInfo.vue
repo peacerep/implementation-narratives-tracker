@@ -1,10 +1,10 @@
 <template>
     <div class="info-wrapper">
         <div style="display: flex; flex-direction: row;">
-            <p>{{ this.agtDate }}</p>
+            <p class="agt-des">{{ this.agtDate }}</p>
             <el-link :href="this.toLink" :underline="false" target="_blank" style="margin-left: 10px;">See full text in PA-X</el-link>
         </div>
-        <p>{{ this.toDescription }}</p>
+        <p class="agt-des">{{ this.toDescription }}</p>
     </div>
 
     <el-row justify="start" class="metric-wrapper">
@@ -63,13 +63,7 @@ export default {
 
 
 <style scoped>
-p {
-    padding: 0px;
-    margin: 5px 0px;
-}
-.metric-wrapper {
-  margin: 10px 0px;
-}
+
 .el-row:last-child {
   margin-bottom: 0;
 }
@@ -77,33 +71,8 @@ p {
   border-radius: 4px;
 }
 
-.info-wrapper {
-    margin: 0px 0px;
-}
-
-.metric-num {
-    font-size: 34px;
-    margin: 5px;
-}
-
-.metric-des {
-    font-size: 14px;
-    margin: 5px;
-}
-
-/deep/ .info-card .el-card__body {
+::v-deep .info-card .el-card__body {
     padding: 5px;
 }
-
-.flex-metrics {
-    display: flex; 
-    flex-direction: row; 
-    align-items: center;
-}
-
-.mouse-hover :hover {
-    cursor: pointer;
-}
-
 
 </style>

@@ -29,7 +29,6 @@ export default {
   name: 'HomeView',
   components: {
     countrySearchBox, introCards, trackerHeader, trackerFooter
-    
   }
 }
 </script>

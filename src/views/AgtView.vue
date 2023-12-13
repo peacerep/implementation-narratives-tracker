@@ -8,7 +8,7 @@
             <el-icon><CaretRight /></el-icon>
             <el-link class="country-title current-page">Provision Implementations</el-link>
         </div>
-        <h1>{{ this.agtName }}</h1>
+        <h1 class="agt-title">{{ this.agtName }}</h1>
 
         <agtInfo 
             :provisionCounter="this.provisionCounter"
@@ -19,7 +19,7 @@
     </div>
 
     <topicList
-        :agtTopicList="agtTopicList"
+        :agtTopicList="this.uniqueSubcategories"
         :selTopic="selTopic"
         @changeTopic="changeTopic" />
 
@@ -72,14 +72,13 @@ export default ({
             let subProvisionCounter = 0
             let tmpArr = []
             for (let item of this.provisionList) {
-                if (this.displayedTopic == item.topic) {
+                if (this.displayedTopic == item.subcategory) {
                     subProvisionCounter = item.provisions.length
                     tmpArr = item.provisions
                 }
             }
             this.topicProvisionCounter = subProvisionCounter
             this.selectedProvisions = tmpArr
-            // console.log(this.selectedProvisions)
         },
 
         toCountryView(country) {
@@ -109,23 +108,64 @@ export default ({
         let countryName = $route.query.title
         let agtDate = $route.query.agtDate
         let agtID = $route.query.id
-        let selTopic = $route.query.topic
+        let selTopic = $route.query.subCatAsTopic
 
         let data = {}
         let provisionList = []
 
         //initialize data to this page: topics+provisions+reports
+        // for (let country of countries.countries) {
+        //     if (country.name == countryName) {
+        //         data = country
+        //         for (let item of data.topics) {
+        //             let topicName = item.text
+        //             let subcategoryLabel = item.subcategory[0]
+        //             for (let agt of item.agreements) {
+        //                 if ( agtName == agt.name ) {
+        //                     provisionList.push({subcategory: subcategoryLabel, topic: topicName, provisions: agt.provisions})
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        // Initialize data to this page: topics + provisions + reports
         for (let country of countries.countries) {
             if (country.name == countryName) {
-                data = country
+                data = country;
+                // Map to keep track of subcategories and their corresponding data
+                let subcategoryMap = new Map();
                 for (let item of data.topics) {
-                    let topicName = item.text
+                    let topicName = item.text;
+                    let subcategoryLabel = item.subcategory[0];
+
                     for (let agt of item.agreements) {
-                        if ( agtName == agt.name ) {
-                            provisionList.push({topic: topicName, provisions: agt.provisions})
+                        if (agtName == agt.name) {
+                            // Check if the subcategory already exists in the map
+                            if (!subcategoryMap.has(subcategoryLabel)) {
+                                subcategoryMap.set(subcategoryLabel, { topics: [], provisions: [] });
+                            }
+                            // Get the existing entry from the map
+                            let subcatEntry = subcategoryMap.get(subcategoryLabel);
+                            // Add topic if it's not already in the list
+                            if (!subcatEntry.topics.includes(topicName)) {
+                                subcatEntry.topics.push(topicName);
+                            }
+
+                            // Check for duplicate provisions based on their 'number'
+                            for (let provision of agt.provisions) {
+                                if (!subcatEntry.provisions.some(p => p.number === provision.number)) {
+                                    subcatEntry.provisions.push(provision);
+                                }
+                            }
                         }
                     }
                 }
+
+                // Convert the map to the desired list format
+                provisionList = Array.from(subcategoryMap).map(([subcategory, { topics, provisions }]) => {
+                    return { subcategory, topics, provisions };
+                });
             }
         }
 
@@ -147,6 +187,9 @@ export default ({
             }
         }
 
+        // console.log(provisionList)
+
+
         //PAX links & descriptions
         let paxLink = ''
         let agtDescription = ''
@@ -165,53 +208,43 @@ export default ({
         let agtTopicList = []
 
         //count all the provisions
-        for (let topic of provisionList) {
-            agtTopicList.push(topic.topic)
-            for (let provision of topic.provisions){
-                provisionCounter++
+        // for (let topic of provisionList) {
+        //     agtTopicList.push(topic.topic)
+        //     for (let provision of topic.provisions){
+        //         provisionCounter++
+        //         for (let report of provision.reports) {
+        //             if (reportList.includes(report.id) == false){
+        //                 reportList.push(report.id)
+        //                 reportCounter++
+        //             }
+        //         }
+        //     }    
+        // }
+
+        let uniqueSubcategories = new Set(); 
+
+        for (let item of provisionList) {
+            // Add subcategory to the set of unique subcategories
+            uniqueSubcategories.add(item.subcategory);
+
+            // Count provisions and reports
+            for (let provision of item.provisions) {
+                provisionCounter++; 
                 for (let report of provision.reports) {
-                    if (reportList.includes(report.id) == false){
-                        reportList.push(report.id)
-                        reportCounter++
+                    if (!reportList.includes(report.id)) {
+                        reportList.push(report.id); 
+                        reportCounter++; 
                     }
                 }
-            }    
+            }
         }
+        let uniqueSubcategoryCount = uniqueSubcategories.size;
+        
+
 
         return {
-            agtName, agtDate, agtID, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription, selTopic
+            agtName, agtDate, agtID, countryName, provisionList, provisionCounter, reportCounter, agtTopicList, paxLink, agtDescription, selTopic, uniqueSubcategories, uniqueSubcategoryCount
         }
     }
 })
 </script>
-
-<style scoped>
-
-h1 {
-    font-size: 28px;
-    margin: 0px 0px 10px 0px;
-}
-
-.agt-head {
-    text-align: left;
-    padding: 2vh 5%;
-}
-
-.country-title {
-    font-size: 16px;
-    font-weight: medium;
-    margin: 0px 5px;
-}
-
-.breadcrumb {
-    display: flex; 
-    flex-direction: row; 
-    align-items: center;
-    margin: 10px 0px;
-}
-
-.current-page {
-    font-style: italic;
-}
-
-</style>

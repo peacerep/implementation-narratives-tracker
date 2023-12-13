@@ -14,13 +14,8 @@
 <script>
 // import { useRoute } from 'vue-router'
 
-// import sideMenu from '@/components/sideMenu.vue'
 import trackerHeader from '@/components/trackerHeader.vue'
 import trackerFooter from '@/components/trackerFooter.vue'
-
-// 导入数据
-// import countries from '@/data/countries.json'
-
 
 export default {
   components: { trackerHeader, trackerFooter}

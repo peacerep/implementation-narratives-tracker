@@ -39,8 +39,9 @@
         </el-row>
 
     <!-- the collapse -->
-    <el-row justify="center" :gutter="30" class="section-wrapper">
-        <el-col :span="12">
+    <el-row justify="center" :gutter="30" class="section-wrapper" style="margin-bottom: 10vh;">
+        <el-col :span="12"
+        style="height: 80vh; overflow: auto;">
             <!-- loop the provisions -->
             <div class="text-container"
                 v-for="(provision, index) in this.selectedProvisions"
@@ -516,11 +517,6 @@ export default ({
             this.renderReportBar()
             this.changeStyle(0)
             this.showDrawerButton(0)
-
-            // console.log("Sorting", this.reverse)
-            // if (this.reverse == '2') {
-            //     this.reverse = "1"
-            // }
         }
     }
 })
@@ -528,30 +524,24 @@ export default ({
 
 
 <style scoped>
-h1 {
+/* h1 {
     font-size: 30px;
     margin: 60px 0px 0px 0px;
 }
+ */
 
-h2 {
-    font-size: 24px;
-}
 
-h3 {
-    padding: 0px;
-    margin: 0px;
-}
-.title {
+/* .title {
     text-align: center;
     margin: 40px 50px 20px 50px;
-}
+} */
 
-.counters {
+/* .counters {
     padding: 5px 5px;
     margin: 0px;
-}
+} */
 
-.radio-group {
+/* .radio-group {
     float: right;
     padding: 5px 0px 5px 50px;
 }
@@ -587,48 +577,16 @@ h3 {
 
 .segment-container:nth-last-child(1) {
     border-bottom: none;
-}
+} */
 
-.segment-divider {
+/* .segment-divider {
     margin: 10px 0px;
     border-style: dashed;
-}
+} */
 
-
-.timeline {
-    text-align: left;
-    padding: 0px;
-    margin: 0px;
-}
-.agt-extracts {
-    color: darkgray;
-    font-size: 16px;
-    font-weight: 400;
-}
-
-.agt-extracts:hover {
-    color: grey;
-    cursor: pointer;
-}
-.changeStyle {
-    color: black;
-    font-weight: 600;
-}
-
-.repo-source {
-    margin: 0px;
-    padding: 5px 5px 5px 0px;
-}
-
-/deep/ .el-drawer__body {
+::v-deep .el-drawer__body {
     padding-top: 0px;
 }
 
-.source-wrapper {
-    padding-top: 10px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
 
 </style>

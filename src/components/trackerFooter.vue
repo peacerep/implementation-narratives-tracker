@@ -16,12 +16,3 @@ export default ({
     }
 })
 </script>
-
-
-<style scoped>
-.el-footer {
-    padding: 30px;
-    height: 150px;
-    background-color: #FAFAFA;
-}
-</style>

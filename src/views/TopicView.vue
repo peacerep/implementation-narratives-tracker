@@ -52,7 +52,7 @@
                     <el-col :span="12">
                         <!-- <h3>Provisions</h3> -->
                         <div class="text-container">
-                            <p class="agt-extracts"
+                            <p class="agt-extracts-topic"
                                 :class="{changeStyle:changeStyleIndex == index}"
                                 @click="toggleProvision(provision.number)">
                                 ...{{ provision.text }}...
@@ -338,6 +338,9 @@ export default {
 
         let data = {}
 
+        console.log(topicId)
+
+
         var topicCategory = ""
         var topicSubcategory = ""
         // var topic = ""
@@ -353,11 +356,8 @@ export default {
                     if ( topicId == item.id) {
                         topicCategory = item.category[0]
                         topicSubcategory = item.subcategory[0]
-                        // topic = item.text
-                        
-                        topicData = item
-                        // provision = item.provisions
-                        
+                       
+                        topicData = item                      
                     }
                 }
             }
@@ -372,177 +372,3 @@ export default {
 }
 
 </script>
-
-<style scoped>
-
-.agt-head {
-    text-align: left;
-    padding: 2vh 5%;
-}
-
-.country-title {
-    font-size: 16px;
-    font-weight: medium;
-    margin: 0px 5px;
-}
-
-.breadcrumb {
-    display: flex; 
-    flex-direction: row; 
-    align-items: center;
-    margin: 10px 0px;
-}
-
-.current-page {
-    font-style: italic;
-}
-
-h1 {
-    font-size: 28px;
-    margin: 0px 0px 10px 0px;
-}
-
-h3 {
-    padding: 0px;
-    margin: 0px;
-}
-
-.agt-head {
-    text-align: left;
-    padding: 2vh 5%;
-}
-
-.country-title {
-    font-size: 16px;
-    font-weight: medium;
-    margin: 0px 5px;
-}
-
-.breadcrumb {
-    display: flex; 
-    flex-direction: row; 
-    align-items: center;
-    margin: 10px 0px;
-}
-
-.current-page {
-    font-style: italic;
-}
-
-.text-container {
-    text-align: left;
-    margin: 0px 00px;
-}
-
-.tracker {
-    margin: 0 5%;
-}
-
-.section-wrapper {
-    margin: 0px 0px;
-    text-align: left;
-}
-
-.segment-text {
-    margin: 0px 0px 0px 0px;
-    padding: 0px;
-}
-
-.segment-container {
-    margin-top: 10px;
-    padding-bottom: 10px;
-    margin-bottom: 5px;
-    border-bottom: 1.3px dashed #CFCFCF;
-}
-
-.segment-container:nth-last-child(1) {
-    border-bottom: none;
-}
-
-.segment-divider {
-    margin: 10px 0px;
-    border-style: dashed;
-}
-
-
-.timeline {
-    text-align: left;
-    padding: 0px;
-    margin: 0px;
-}
-
-.source-wrapper {
-    padding-top: 0px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.agt-extracts {
-    color: black;
-    font-size: 16px;
-    font-weight: 400;
-}
-
-.agt-extracts:hover {
-    color: grey;
-    cursor: pointer;
-}
-
-.agt-in-topic {
-    padding-top: 0;
-    margin: 0px 0px 10px 0px;
-}
-
-.agt-in-topic:hover{
-    cursor:pointer
-}
-
-.agreement-container {
-    display: flex;
-    align-items: flex-start;
-    margin: 40px 10px 10px 10px;
-    transition: box-shadow 0.3s ease;
-}
-
-.agreement-container:hover {
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 25px 20px -20px;
-}
-
-.agreement-container:hover .agt-in-topic {
-    text-decoration: underline;
-}
-
-.provision-container {
-    margin: 0px 25px;
-}
-
-.date-column {
-    width: 80px;
-    flex-shrink: 0;
-    text-align: center;
-    margin-right: 20px;
-}
-
-.info-column {
-    flex-grow: 1;
-    padding-left: 10px; 
-}
-
-.date-column-ddmm {
-    font-size: 18px;
-    font-weight: 300;
-    font-style: italic;
-    padding: 3px 0;
-    margin: 0;
-    border-bottom: 1px solid gray;
-}
-
-.date-column-yyyy {
-    font-size: 24px;
-    font-weight: 800;
-    font-style: italic;
-    padding: 3px 0;
-    margin: 0;
-}
-</style>
