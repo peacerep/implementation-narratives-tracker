@@ -54,24 +54,26 @@
                         <div class="text-container">
                             <p class="agt-extracts-topic"
                                 :class="{changeStyle:changeStyleIndex == index}"
-                                @click="toggleProvision(provision.number)">
+                                @click="toggleProvision(provision.number, provision.reports)">
                                 ...{{ provision.text }}...
                             </p>
                             <div v-for="(topic, index) in provision.topicTexts" :key="index" class="topic-container">
                                 <p>{{ topic }}</p>
                             </div>
-                            <el-button 
+                            <!-- <el-button 
                                 round size="small"
                                 v-if="selectedProvisionNumber === provision.number"
                                 @click="openDrawer(provision.number, selectedAgreementId, agt.name)">
                                 Locate in Agreement
-                            </el-button>
+                            </el-button> -->
                         </div>
                     </el-col>
 
                     <el-col :span="12" style="padding: 20px 0px;">
+                        <div id="if-empty"></div>
                         <!-- <h3>Reports</h3> -->
                         <el-scrollbar max-height="80vh" v-if="selectedProvisionNumber === provision.number">
+                            
                             <el-timeline class="timeline">
                                 <el-timeline-item
                                     v-for="report in provision.reports"
@@ -219,12 +221,20 @@ export default {
             }
         },
 
-        toggleProvision(provisionNumber) {
+        toggleProvision(provisionNumber, provisionReports) {
+            let reportCounter = provisionReports.length
             if (this.selectedProvisionNumber === provisionNumber) {
                 this.selectedProvisionNumber = null;
             } else {
                 this.selectedProvisionNumber = provisionNumber;
                 // console.log("click", provisionNumber)
+                const emptyDiv = document.querySelector("#if-empty")
+                if (reportCounter == 0) {
+                    emptyDiv.innerHTML = '<p>We found no instances of implementation found for this provision topic.</p>';
+                }
+                else {
+                    emptyDiv.innerHTML = ''
+                }
             }
         },
 
@@ -325,13 +335,13 @@ export default {
     },
 
     computed: {
-    sortedAgreements() {
-        return this.topicData.agreements.slice().sort((a, b) => {
-            return b.date - a.date;
-            // return a.date - b.date;
-        });
-    }
-},
+        sortedAgreements() {
+            return this.topicData.agreements.slice().sort((a, b) => {
+                return b.date - a.date;
+                // return a.date - b.date;
+            });
+        }
+    },
 
     setup() {
         const $route = useRoute()
@@ -351,29 +361,62 @@ export default {
 
         let agreementTopicTexts = new Map();
 
+        // for (let country of countries.countries) {
+        //     if (country.name == countryName) {
+        //         data = country
+                
+        //         for (let item of data.topics) {
+        //             if ( subCategory == item.subcategory[0]) {
+        //                 topicCategory = item.category[0]
+
+        //                 // Store topic texts by agreement ID
+        //                 item.agreements.forEach(agreement => {
+        //                     if (!agreementTopicTexts.has(agreement.id)) {
+        //                         agreementTopicTexts.set(agreement.id, []);
+        //                     }
+        //                     agreementTopicTexts.get(agreement.id).push(item.text);
+        //                 });
+
+        //                 topicList.push(...item.agreements)
+        //             }
+        //         }
+        //     }
+        // }
+        
         for (let country of countries.countries) {
             if (country.name == countryName) {
                 data = country
-                
+
                 for (let item of data.topics) {
-                    if ( subCategory == item.subcategory[0]) {
-                        topicCategory = item.category[0]
+                    // Iterate through category-subcategory pairs
+                    item.category.forEach(catSubCatPair => {
+                        let categoryLabel = catSubCatPair[0];
+                        let subcategoryLabel = catSubCatPair[1];
 
-                        // Store topic texts by agreement ID
-                        item.agreements.forEach(agreement => {
-                            if (!agreementTopicTexts.has(agreement.id)) {
-                                agreementTopicTexts.set(agreement.id, []);
-                            }
-                            agreementTopicTexts.get(agreement.id).push(item.text);
-                        });
+                        if (subCategory == subcategoryLabel) {
+                            topicCategory = categoryLabel;
 
-                        topicList.push(...item.agreements)
-                    }
+                            // Store topic texts by agreement ID
+                            item.agreements.forEach(agreement => {
+                                if (!agreementTopicTexts.has(agreement.id)) {
+                                    agreementTopicTexts.set(agreement.id, []);
+                                }
+                                agreementTopicTexts.get(agreement.id).push(item.text);
+                            });
+
+                            // Assuming 'topicList' should contain unique agreement objects
+                            item.agreements.forEach(agreement => {
+                                if (!topicList.some(a => a.id === agreement.id)) {
+                                    topicList.push(agreement);
+                                }
+                            });
+                        }
+                    });
                 }
             }
-        }   
+        }
         
-        console.log("first topic list", topicList)
+        // console.log("first topic list", topicList)
 
         let tempData = {};
 
@@ -412,7 +455,7 @@ export default {
 
         // Convert tempData back to an array.
         let topicData = { agreements: Object.values(tempData) };
-        console.log("topicData", topicData)
+        // console.log("topicData", topicData)
 
         return {
             topicData, topicList, subCategory, countryName, topicCategory

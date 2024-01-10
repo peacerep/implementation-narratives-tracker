@@ -125,11 +125,11 @@
 
     <!-- Agreement Full Text -->
     <el-drawer
-    v-model="docDrawerOpen"
-    :direction="direction"
-    title="Agreement full text"
-    size="45%"
-    >
+        v-model="docDrawerOpen"
+        :direction="direction"
+        title="Agreement full text"
+        size="45%"
+        >
         <docDrawerTopic ref="docDrawer" :agtId="this.selectedAgreementId" :agtName="this.clickedAgt" :id="this.segement_id" :docDrawerOpen="docDrawerOpen" :country="this.countryName"/>
     </el-drawer>
 

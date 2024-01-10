@@ -66,13 +66,11 @@ export default ({
         // }
 
         toSubCategoryView(subCategoryTopic, country) {
-            console.log(subCategoryTopic, country)
+            // console.log(subCategoryTopic, country)
             this.$router.push({
                 name: `subCategoryList`,
                 query: {
                     subCategory: `${subCategoryTopic.label}`,
-                    // topicList: `${subCategoryTopic.topicList}`,
-                    // topicList: JSON.stringify(subCategoryTopic.topicList),
                     country: `${country}`
                 }
             })

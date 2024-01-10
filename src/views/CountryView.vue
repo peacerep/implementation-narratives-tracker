@@ -144,181 +144,161 @@ export default ({
         }
 
         // Get all agreement list
-        let topic = ''
+        // let topic = ''
         // find duplicate topic
-        let topicID = 0
+        // let topicID = 0
         let topicList = []
 
         let topicOptions = []
-        let agtName = ''
-        let agtID = ''
+        // let agtName = ''
+        // let agtID = ''
         let yearOptions = []
 
         //temp: for agtlist showing categories
-        let cat = ""
-        let subCat = ""
+        // let cat = ""
+        // let subCat = ""
 
         let topicByCategory = []
 
-        let agtList = []
+        // let agtList = []
+        
         for (let item of data.topics) {
-                topic = item.text
-                topicOptions.push(topic)
+            let topic = item.text;
+            topicOptions.push(topic);
 
-                // find duplicate topic
-                topicID = item.id
-                topicList.push({"id": topicID, "topic": topic})
-                
-                const categoryLabel = item.category[0];
-                const subcategoryLabel = item.subcategory[0];
+            // Find duplicate topic
+            let topicID = item.id;
+            topicList.push({ "id": topicID, "topic": topic });
 
-                // search and match category
-                let categoryEntry = null;
-                for (let category of topicByCategory) {
-                    if (category.categoryLabel === categoryLabel) {
-                    categoryEntry = category;
-                    break;
-                    }
-                }
-                // create category
-                if (categoryEntry === null) {
+            // Iterate through category-subcategory pairs
+            for (let catSubCatPair of item.category) {
+                let categoryLabel = catSubCatPair[0];
+                let subcategoryLabel = catSubCatPair[1];
+
+                // Search and match category
+                let categoryEntry = topicByCategory.find(category => category.categoryLabel === categoryLabel);
+
+                // Create category if it doesn't exist
+                if (!categoryEntry) {
                     categoryEntry = {
-                    categoryLabel: categoryLabel,
-                    subcategories: []
+                        categoryLabel: categoryLabel,
+                        subcategories: []
                     };
                     topicByCategory.push(categoryEntry);
                 }
-                // search and match subcategory
-                let subcategoryEntry = null;
-                for (let subcategory of categoryEntry.subcategories) {
-                    if (subcategory.label === subcategoryLabel) {
-                    subcategoryEntry = subcategory;
-                    break;
-                    }
-                }
-                // create subcategory
-                if (subcategoryEntry === null) {
+
+                // Search and match subcategory
+                let subcategoryEntry = categoryEntry.subcategories.find(subcategory => subcategory.label === subcategoryLabel);
+
+                // Create subcategory if it doesn't exist
+                if (!subcategoryEntry) {
                     subcategoryEntry = {
-                    label: subcategoryLabel,
-                    topicList: []
+                        label: subcategoryLabel,
+                        topicList: []
                     };
                     categoryEntry.subcategories.push(subcategoryEntry);
                 }
-                // Add the topic text to the subcategory's topicList
-                subcategoryEntry.topicList.push({id: item.id, topic: item.text});
 
+                // Add the topic to the subcategory's topicList
+                subcategoryEntry.topicList.push({ id: item.id, topic: item.text });
+            }
 
+            for (let agt of item.agreements) {
+                let agtName = agt.name;
+                let agtID = agt.id;
+                let agtTime = '';
 
+                // Convert agreement date to YYYY-MM-DD format
+                let tmp = agt.date.toString();
+                let YEAR = tmp.slice(0, 4);
+                let MONTH = tmp.slice(4, 6);
+                let DAY = tmp.slice(6, 8);
+                agtTime = YEAR + '-' + MONTH + '-' + DAY;
 
-                //temp: find current category and subcategory
-                cat = item.category[0]
-                subCat = item.subcategory[0]
+                // Process agreement details
+                let agreement = agreementList.find(a => a.agt === agtName);
 
-                for (let agt of item.agreements){
-                    agtName = agt.name
-                    agtID = agt.id
-                    let agtTime = ''
-                    
-                    // decide if this agt is in the list
-                    if (agtList.includes(agtName) == false){
-                        agtList.push(agtName)
-                        
-                        // get agt time
-                        let tmp = agt.date.toString()
-                        let YEAR = tmp.slice(0,4)
-                        let MONTH = tmp.slice(4,6)
-                        let DAY = tmp.slice(6,8)
-                        agtTime = YEAR + '-' + MONTH + '-' + DAY
-
-                        if(yearOptions.includes(YEAR) == false){
-                            yearOptions.push(YEAR)
-                        }
-
-                        agreementList.push({'agt': agtName, 'id': agtID, 'date': agtTime, 'year': YEAR, "categoryList": [{label: cat, subCategoryList: [subCat]}], "topics": [topic], "topicsID": [{id: topicID, topic: topic}]})
+                if (!agreement) {
+                    agreement = {
+                        'agt': agtName,
+                        'id': agtID,
+                        'date': agtTime,
+                        'year': YEAR,
+                        'categoryList': item.category.map(catSubCat => ({ label: catSubCat[0], subCategoryList: [catSubCat[1]] })),
+                        'topics': [topic],
+                        'topicsID': [{ id: topicID, topic: topic }]
+                    };
+                    agreementList.push(agreement);
+                    if (!yearOptions.includes(YEAR)) {
+                        yearOptions.push(YEAR);
                     }
-                    else {
-                        for (let subAgt of agreementList) {
-                            if (subAgt.agt == agtName) {
-                                subAgt.topics.push(topic)
-                                subAgt.topicsID.push({id: topicID, topic: topic})
+                } else {
+                    // Update existing agreement
+                    agreement.topics.push(topic);
+                    agreement.topicsID.push({ id: topicID, topic: topic });
 
-                                let categoryExists = false;
-                                // Iterate through existing categories to find if the current category exists
-                                for (let category of subAgt.categoryList) {
-                                    if (category.label == cat) {
-                                        categoryExists = true;
-                                        let subCategoryExists = false;
-                                        // Check if the subcategory already exists
-                                        for (let subcategory of category.subCategoryList) {
-                                            if (subcategory == subCat) {
-                                                subCategoryExists = true;
-                                                break;
-                                            }
-                                        }
-                                        // If subcategory does not exist, add it
-                                        if (!subCategoryExists) {
-                                            category.subCategoryList.push(subCat);
-                                        }
-                                        break;
-                                    }
-                                }
-                                // If the category does not exist, add it with the new subcategory
-                                if (!categoryExists) {
-                                    subAgt.categoryList.push({label: cat, subCategoryList: [subCat]});
-                                }
-                            
-                            }
+                    item.category.forEach(catSubCat => {
+                        let cat = catSubCat[0];
+                        let subCat = catSubCat[1];
+                        let category = agreement.categoryList.find(c => c.label === cat);
+
+                        if (!category) {
+                            agreement.categoryList.push({ label: cat, subCategoryList: [subCat] });
+                        } else if (!category.subCategoryList.includes(subCat)) {
+                            category.subCategoryList.push(subCat);
                         }
-                    }
+                    });
                 }
             }
+        }
 
-            // console.log("category entry", topicByCategory)
-        
 
-            for (let subAgt of agreementList) {
-                subAgt.topicsID.sort((a, b) => {
-                    if (a.topic < b.topic) return -1;
-                    if (a.topic > b.topic) return 1;
-                    return 0;
-                });
+        // console.log("category entry", topicByCategory)
+    
 
-                subAgt.topics.sort();
+        for (let subAgt of agreementList) {
+            subAgt.topicsID.sort((a, b) => {
+                if (a.topic < b.topic) return -1;
+                if (a.topic > b.topic) return 1;
+                return 0;
+            });
+
+            subAgt.topics.sort();
+        }
+
+        //find duplicate topics
+        topicList.sort((a, b) => {
+                if (a.topic < b.topic) return -1;
+                if (a.topic > b.topic) return 1;
+                return 0;
+            });
+        // console.log(topicList)
+
+        let topicMap = {};
+
+        // Build the map
+        for (let item of topicList) {
+            if (!topicMap[item.topic]) {
+                topicMap[item.topic] = [];
             }
-
-            //find duplicate topics
-            topicList.sort((a, b) => {
-                    if (a.topic < b.topic) return -1;
-                    if (a.topic > b.topic) return 1;
-                    return 0;
-                });
-            // console.log(topicList)
-
-            let topicMap = {};
-
-            // Build the map
-            for (let item of topicList) {
-                if (!topicMap[item.topic]) {
-                    topicMap[item.topic] = [];
-                }
-                if (!topicMap[item.topic].includes(item.id)) {
-                    topicMap[item.topic].push(item.id);
-                }
+            if (!topicMap[item.topic].includes(item.id)) {
+                topicMap[item.topic].push(item.id);
             }
+        }
 
-            // Find topics with more than one unique id
-            let duplicateTopics = Object.keys(topicMap).filter(topic => topicMap[topic].length > 1);
+        // Find topics with more than one unique id
+        let duplicateTopics = Object.keys(topicMap).filter(topic => topicMap[topic].length > 1);
 
-            // Extract the items from topicList based on the duplicate topics
-            let duplicates = topicList.filter(item => duplicateTopics.includes(item.topic));
-            console.log(duplicates);
+        // Extract the items from topicList based on the duplicate topics
+        let duplicates = topicList.filter(item => duplicateTopics.includes(item.topic));
+        console.log(duplicates);
 
-            // sort the arrary by date descending order
-            agreementList.sort(function(a, b) {
-                    // return new Date(b.date) - new Date(a.date);
-                    return new Date(a.date) - new Date(b.date);
+        // sort the arrary by date descending order
+        agreementList.sort(function(a, b) {
+                // return new Date(b.date) - new Date(a.date);
+                return new Date(a.date) - new Date(b.date);
 
-                })
+            })
         
         for (let agreement of agreementList) {
             let uniqueSubCats = new Set();

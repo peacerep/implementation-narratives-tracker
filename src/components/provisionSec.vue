@@ -2,6 +2,7 @@
     <div class="tracker">
         <div class="title">
             <p style="margin-bottom: 0px;">Selected Topic:</p>
+            <p>{{ this.displayedCategroy }}</p>
             <h2 style="margin-top: 10px; font-style: italic;">{{ this.displayedTopic }}</h2>
         </div>
         <!-- heading for the provisions/implementation -->
@@ -53,13 +54,13 @@
                             :class="{changeStyle:changeStyleIndex == index}">
                         ...{{ provision.text }}... </p>
 
-                        <el-button 
+                        <!-- <el-button 
                             round size="small" 
                             v-show="this.buttonVisible == index"
                             @click="openDrawer(provision.number, index)"
                             style="margin-bottom: 10px;">
                             Locate in Agreement
-                        </el-button>
+                        </el-button> -->
                     </div>
 
                     <el-divider class="provision-divider"/>
@@ -158,7 +159,7 @@ import * as d3 from "d3";
 
 export default ({
     components: { docDrawer, reportDrawer },
-    props: ['displayedTopic', 'topicProvisionCounter', 'selectedProvisions', 'country', 'agtDate'],
+    props: ['displayedTopic', 'displayedCategroy', 'topicProvisionCounter', 'selectedProvisions', 'country', 'agtDate'],
 
     data() {
         return {

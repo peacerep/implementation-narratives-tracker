@@ -28,6 +28,7 @@
         :agtID="this.agtID"
         :agtName="this.agtName"
         :displayedTopic="displayedTopic"
+        :displayedCategroy="displayedCategroy"
         :topicProvisionCounter="topicProvisionCounter"
         :selectedProvisions="selectedProvisions"
         :country="countryName" />
@@ -56,6 +57,7 @@ export default ({
     data() {
         return{
             displayedTopic: 'please select a topic',
+            displayedCategroy: "Category",
             topicProvisionCounter: 0,
             selectedProvisions: [],
             toLink: this.paxLink,
@@ -65,9 +67,10 @@ export default ({
     },
 
     methods: {
-        changeTopic(topic) {
+        changeTopic(topic, category) {
             //assign to the selected topic
             this.displayedTopic = topic
+            this.displayedCategroy = category
 
             let subProvisionCounter = 0
             let tmpArr = []
@@ -96,9 +99,7 @@ export default ({
     },
 
     beforeMount(){
-        //set the default choice to be the first topic in topicList
-        // this.changeTopic(this.agtTopicList[0])
-        this.changeTopic(this.selTopic)
+        this.changeTopic(this.selTopic, this.selCategory)
     },
 
     setup() {
@@ -109,6 +110,7 @@ export default ({
         let agtDate = $route.query.agtDate
         let agtID = $route.query.id
         let selTopic = $route.query.subCatAsTopic
+        // let selCategory = $route.query.category
 
         let data = {}
         let provisionList = []
@@ -130,42 +132,80 @@ export default ({
         // }
 
         // Initialize data to this page: topics + provisions + reports
+        // for (let country of countries.countries) {
+        //     if (country.name == countryName) {
+        //         data = country;
+        //         let subcategoryMap = new Map();
+        //         for (let item of data.topics) {
+        //             let topicName = item.text;
+        //             let subcategoryLabel = item.subcategory[0];
+
+        //             for (let agt of item.agreements) {
+        //                 if (agtName == agt.name) {
+        //                     if (!subcategoryMap.has(subcategoryLabel)) {
+        //                         subcategoryMap.set(subcategoryLabel, { topics: [], provisions: [] });
+        //                     }
+        //                     let subcatEntry = subcategoryMap.get(subcategoryLabel);
+        //                     if (!subcatEntry.topics.includes(topicName)) {
+        //                         subcatEntry.topics.push(topicName);
+        //                     }
+        //                     for (let provision of agt.provisions) {
+        //                         if (!subcatEntry.provisions.some(p => p.number === provision.number)) {
+        //                             subcatEntry.provisions.push(provision);
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         provisionList = Array.from(subcategoryMap).map(([subcategory, { topics, provisions }]) => {
+        //             return { subcategory, topics, provisions };
+        //         });
+        //     }
+        // }
+
         for (let country of countries.countries) {
             if (country.name == countryName) {
                 data = country;
-                // Map to keep track of subcategories and their corresponding data
-                let subcategoryMap = new Map();
+                let categoryMap = new Map();
+
                 for (let item of data.topics) {
                     let topicName = item.text;
-                    let subcategoryLabel = item.subcategory[0];
 
-                    for (let agt of item.agreements) {
-                        if (agtName == agt.name) {
-                            // Check if the subcategory already exists in the map
-                            if (!subcategoryMap.has(subcategoryLabel)) {
-                                subcategoryMap.set(subcategoryLabel, { topics: [], provisions: [] });
-                            }
-                            // Get the existing entry from the map
-                            let subcatEntry = subcategoryMap.get(subcategoryLabel);
-                            // Add topic if it's not already in the list
-                            if (!subcatEntry.topics.includes(topicName)) {
-                                subcatEntry.topics.push(topicName);
-                            }
+                    // Iterate through category-subcategory pairs
+                    for (let catSubCatPair of item.category) {
+                        let categoryLabel = catSubCatPair[0];
+                        let subcategoryLabel = catSubCatPair[1];
 
-                            // Check for duplicate provisions based on their 'number'
-                            for (let provision of agt.provisions) {
-                                if (!subcatEntry.provisions.some(p => p.number === provision.number)) {
-                                    subcatEntry.provisions.push(provision);
+                        for (let agt of item.agreements) {
+                            if (agtName == agt.name) {
+                                // Construct a unique key for each category-subcategory pair
+                                let key = `${categoryLabel}|${subcategoryLabel}`;
+
+                                // Check if the key already exists in the map
+                                if (!categoryMap.has(key)) {
+                                    categoryMap.set(key, { category: categoryLabel, subcategory: subcategoryLabel, topics: [], provisions: [] });
+                                }
+                                // Get the existing entry from the map
+                                let categoryEntry = categoryMap.get(key);
+
+                                // Add topic if it's not already in the list
+                                if (!categoryEntry.topics.includes(topicName)) {
+                                    categoryEntry.topics.push(topicName);
+                                }
+
+                                // Check for duplicate provisions based on their 'number'
+                                for (let provision of agt.provisions) {
+                                    if (!categoryEntry.provisions.some(p => p.number === provision.number)) {
+                                        categoryEntry.provisions.push(provision);
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                // Convert the map to the desired list format
-                provisionList = Array.from(subcategoryMap).map(([subcategory, { topics, provisions }]) => {
-                    return { subcategory, topics, provisions };
-                });
+                // Convert map to list
+                provisionList = Array.from(categoryMap.values());
             }
         }
 

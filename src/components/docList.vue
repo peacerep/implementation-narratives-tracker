@@ -56,22 +56,58 @@ export default ({
     },
 
     methods: {
+        // toAgtView(agreement) {
+        //     console.log("select agreement", agreement)
+
+        //     this.$router.push({
+        //         name: `agreement`,
+        //         query: {
+        //             title: `${this.country}`,
+        //             id: `${agreement.id}`,
+        //             agtName: `${agreement.agt}`,
+        //             agtDate: `${agreement.date}`,
+        //             // topic: `${agreement.topics[0]}`
+        //             topic: `${agreement.topics[0]}`,
+        //             subCatAsTopic: `${agreement.categoryList[0].subCategoryList[0]}`
+        //         }
+        //     })
+        // },
+
         toAgtView(agreement) {
-            // console.log("select agreement", agreement)
-            // console.log("default", agreement.categoryList[0].subCategoryList[0])
+            console.log("select agreement", agreement);
+
+            // Prepare query parameters
+            let queryParams = {
+                title: `${this.country}`,
+                id: `${agreement.id}`,
+                agtName: `${agreement.agt}`,
+                agtDate: `${agreement.date}`
+            };
+
+            // Add the first topic if it exists
+            if (agreement.topics && agreement.topics.length > 0) {
+                queryParams.topic = `${agreement.topics[0]}`;
+            }
+
+            // Check for the existence of categories and subcategories
+            if (agreement.categoryList && agreement.categoryList.length > 0) {
+                let firstCategory = agreement.categoryList[0];
+                queryParams.category = firstCategory.label;
+
+                if (firstCategory.subCategoryList && firstCategory.subCategoryList.length > 0) {
+                    queryParams.subCatAsTopic = `${firstCategory.subCategoryList[0]}`;
+                }
+            }
+
+            console.log("toAgtView", queryParams)
+
+            // Navigate to the agreement view with the prepared query parameters
             this.$router.push({
                 name: `agreement`,
-                query: {
-                    title: `${this.country}`,
-                    id: `${agreement.id}`,
-                    agtName: `${agreement.agt}`,
-                    agtDate: `${agreement.date}`,
-                    // topic: `${agreement.topics[0]}`
-                    topic: `${agreement.topics[0]}`,
-                    subCatAsTopic: `${agreement.categoryList[0].subCategoryList[0]}`
-                }
-            })
+                query: queryParams
+            });
         },
+
 
         toAgtView_topic(agreement, topic) {
             this.$router.push({
