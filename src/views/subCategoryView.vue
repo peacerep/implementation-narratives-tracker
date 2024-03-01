@@ -338,127 +338,48 @@ export default {
         sortedAgreements() {
             return this.topicData.agreements.slice().sort((a, b) => {
                 return b.date - a.date;
-                // return a.date - b.date;
             });
         }
     },
 
     setup() {
         const $route = useRoute()
-        // let topicList = $route.query.topicList
-        // const topicList = JSON.parse($route.query.topicList);
         let subCategory = $route.query.subCategory
         let countryName = $route.query.country
-
-        let data = {}
-
         var topicCategory = ""
-        // var topicSubcategory = ""
-        // var topic = ""
-        var topicList = []
 
-        // var provision;
-
-        let agreementTopicTexts = new Map();
-
-        // for (let country of countries.countries) {
-        //     if (country.name == countryName) {
-        //         data = country
-                
-        //         for (let item of data.topics) {
-        //             if ( subCategory == item.subcategory[0]) {
-        //                 topicCategory = item.category[0]
-
-        //                 // Store topic texts by agreement ID
-        //                 item.agreements.forEach(agreement => {
-        //                     if (!agreementTopicTexts.has(agreement.id)) {
-        //                         agreementTopicTexts.set(agreement.id, []);
-        //                     }
-        //                     agreementTopicTexts.get(agreement.id).push(item.text);
-        //                 });
-
-        //                 topicList.push(...item.agreements)
-        //             }
-        //         }
-        //     }
-        // }
-        
+        let agreementsMap = new Map();
         for (let country of countries.countries) {
             if (country.name == countryName) {
-                data = country
-
-                for (let item of data.topics) {
-                    // Iterate through category-subcategory pairs
+                for (let item of country.topics) {
                     item.category.forEach(catSubCatPair => {
-                        let categoryLabel = catSubCatPair[0];
-                        let subcategoryLabel = catSubCatPair[1];
-
-                        if (subCategory == subcategoryLabel) {
-                            topicCategory = categoryLabel;
-
-                            // Store topic texts by agreement ID
+                        if (catSubCatPair[1] == subCategory) {
                             item.agreements.forEach(agreement => {
-                                if (!agreementTopicTexts.has(agreement.id)) {
-                                    agreementTopicTexts.set(agreement.id, []);
-                                }
-                                agreementTopicTexts.get(agreement.id).push(item.text);
-                            });
-
-                            // Assuming 'topicList' should contain unique agreement objects
-                            item.agreements.forEach(agreement => {
-                                if (!topicList.some(a => a.id === agreement.id)) {
-                                    topicList.push(agreement);
-                                }
+                                topicCategory = catSubCatPair[0];
+                                let agreementData = agreementsMap.get(agreement.id) || { ...agreement, provisions: [] };
+                                agreement.provisions.forEach(prov => {
+                                    let existingProv = agreementData.provisions.find(p => p.number === prov.number);
+                                    if (existingProv) {
+                                        if (!existingProv.topicTexts.includes(item.text)) {
+                                            existingProv.topicTexts.push(item.text);
+                                        }
+                                    } else {
+                                        let newProv = { ...prov, topicTexts: [item.text] };
+                                        agreementData.provisions.push(newProv);
+                                    }
+                                });
+                                agreementsMap.set(agreement.id, agreementData);
                             });
                         }
                     });
                 }
             }
         }
-        
-        // console.log("first topic list", topicList)
-
-        let tempData = {};
-
-        // add agreement into list
-        topicList.forEach(agreement => {
-            if (!tempData[agreement.id]) {
-                // If the agreement is not in tempData
-                tempData[agreement.id] = { ...agreement };
-            } else {
-                // If the agreement is in tempData, merge the provisions.
-                let existingProvisions = tempData[agreement.id].provisions;
-                let newProvisions = agreement.provisions;
-
-                // unique checking
-                let provisionsMap = new Map(existingProvisions.map(prov => [prov.number, prov]));
-
-                // add or merge provisions
-                newProvisions.forEach(prov => {
-                    if (!provisionsMap.has(prov.number)) {
-                        provisionsMap.set(prov.number, prov);
-                    } 
-                });
-
-                // update the provisions in tempData.
-                tempData[agreement.id].provisions = Array.from(provisionsMap.values());
-            }
-        });
-
-        // Add topic texts to provisions
-        for (const [agreementId, provisions] of Object.entries(tempData)) {
-            for (const provision of provisions.provisions) {
-                // Assign topic texts to each provision
-                provision.topicTexts = agreementTopicTexts.get(agreementId);
-            }
-        }
-
-        // Convert tempData back to an array.
-        let topicData = { agreements: Object.values(tempData) };
-        // console.log("topicData", topicData)
+        let topicData = { agreements: Array.from(agreementsMap.values()) };
+        console.log(topicData)
 
         return {
-            topicData, topicList, subCategory, countryName, topicCategory
+            topicData, subCategory, countryName, topicCategory
         }
     }
 }
