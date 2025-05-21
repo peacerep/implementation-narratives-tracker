@@ -74,11 +74,12 @@
               <h4>{{ entry.name }}</h4>
               <p><strong>Date:</strong> {{ formatDate(entry.date) }}</p>
               <div v-if="entry.content && entry.content.length > 0" class="text-list">
-                <div v-for="(c, idx) in entry.content" :key="idx">
-                  <span>{{ c.text }}</span>
-                  <el-divider />
-                </div>
+              <div v-for="(c, idx) in entry.content" :key="idx">
+                <span class="text-content">{{ c.text }}</span>
+                <el-divider />
               </div>
+            </div>
+
             </div>
           </div>
 
@@ -97,7 +98,17 @@
               <p><strong>Date:</strong> {{ formatDate(entry.date) }}</p>
               <div v-if="entry.content && entry.content.length > 0" class="text-list">
                 <div v-for="(c, idx) in entry.content" :key="idx">
-                  <span>{{ c.text }}</span>
+                  <div class="tag-text-line">
+                  <el-tag
+                    effect="plain"
+                    :type="c.polarity >= 0 ? 'success' : 'danger'"
+                    size="small"
+                    round
+                  >
+                    {{ c.polarity >= 0 ? 'positive' : 'negative' }}
+                  </el-tag>
+                  <span class="text-content">{{ c.text }}</span>
+                </div>
                   <el-divider />
                 </div>
               </div>
@@ -398,7 +409,7 @@ export default {
           }
 
           const years = scale.ticks(d3.timeYear.every(1));
-          console.log("years", years); // Should log an array of dates
+          console.log("years", years);
 
           const svg = d3.select(".timeline-path");
           svg.selectAll(".year-label").remove();
@@ -475,7 +486,7 @@ export default {
           })),
         ].sort((a, b) => b.date - a.date);
 
-        // console.log("timeline data", timelineData);
+        console.log("timeline data", timelineData);
 
         return {
             subCategory,
@@ -666,6 +677,18 @@ h4 {
 
 .text-list {
   margin-top: 0.75rem;
+}
+
+.tag-text-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.text-content {
+  flex: 1;
+  line-height: 1.4;
 }
 
 </style>
