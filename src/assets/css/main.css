@@ -1,9 +1,11 @@
-body { 
+html, body { 
     font-family: 'Inter', 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS';
     margin: 0px;
     padding: 0px;
     text-align: left;
     font-size: 1em;
+    height: 100%;
+    margin: 0;
 }
 
 h1.home-title {

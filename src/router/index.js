@@ -31,6 +31,11 @@ const routes = [
     path: '/subCategoryList',
     name: 'subCategoryList',
     component: () => import('../views/subCategoryView.vue')
+  },
+  {
+    path: '/timeline',
+    name: 'timeline',
+    component: () => import('../views/timelineView.vue')
   }
 ]
 

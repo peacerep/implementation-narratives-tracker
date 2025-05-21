@@ -14,7 +14,8 @@
 
       <el-container>
         <el-aside width="50%">
-            <topicByCategoryList :topicByCategory="this.topicByCategory" :countryName="this.countryName"/>
+            <!-- <topicByCategoryList :topicByCategory="this.topicByCategory" :countryName="this.countryName"/> -->
+             <topicTimelineList :topicTimelines = "this.topicTimelines" :countryName="this.countryName"/>
         </el-aside>
 
         <el-divider direction="vertical"></el-divider>
@@ -36,7 +37,7 @@
                 :dataListDisplayed="dataListDisplayed.slice(sizePerPage*(currentPage-1),sizePerPage*currentPage)"
                 :title="title" />
             
-            <!-- page split -->
+
             <div class="paginationClass">
             <el-pagination
                 :page-size="sizePerPage"
@@ -61,14 +62,17 @@ import trackerHeader from '@/components/trackerHeader.vue'
 // import trackerFooter from '@/components/trackerFooter.vue'
 import countryHeader from '@/components/countryHeader.vue'
 import docList from '@/components/docList.vue'
-import topicByCategoryList from '@/components/topicByCategoryList.vue'
+// import topicByCategoryList from '@/components/topicByCategoryList.vue'
+import topicTimelineList from '@/components/topicTimelineList.vue'
+
 
 // import data
 import countries from '@/data/countries.json'
+import topicTimelineData from '@/data/topicTimelineData.json'
 
 export default ({
     components: {
-        countryHeader, docList, topicByCategoryList, trackerHeader
+        countryHeader, trackerHeader, topicTimelineList, docList
     },
 
     data() {
@@ -97,10 +101,6 @@ export default ({
 
             //sort by date
             reverse: '1',
-
-            // topicByCategory: this.topicByCategory
-            // activeCategory: [],
-            // activeSubcategory: {}
         }
     },
 
@@ -136,72 +136,18 @@ export default ({
         let data = {}
         let agreementList = []
 
-        // Initialise agreement data in this page
+        // right panel: Initialise agreement data in this page
         for (let country of countries.countries) {
             if (country.name == countryName) {
                 data = country
             }
         }
 
-        // Get all agreement list
-        // let topic = ''
-        // find duplicate topic
-        // let topicID = 0
-        let topicList = []
-
-        let topicOptions = []
-        // let agtName = ''
-        // let agtID = ''
+        // right panel: process agreement list
         let yearOptions = []
-
-        //temp: for agtlist showing categories
-        // let cat = ""
-        // let subCat = ""
-
-        let topicByCategory = []
-
-        // let agtList = []
-        
         for (let item of data.topics) {
             let topic = item.text;
-            topicOptions.push(topic);
-
-            // Find duplicate topic
             let topicID = item.id;
-            topicList.push({ "id": topicID, "topic": topic });
-
-            // Iterate through category-subcategory pairs
-            for (let catSubCatPair of item.category) {
-                let categoryLabel = catSubCatPair[0];
-                let subcategoryLabel = catSubCatPair[1];
-
-                // Search and match category
-                let categoryEntry = topicByCategory.find(category => category.categoryLabel === categoryLabel);
-
-                // Create category if it doesn't exist
-                if (!categoryEntry) {
-                    categoryEntry = {
-                        categoryLabel: categoryLabel,
-                        subcategories: []
-                    };
-                    topicByCategory.push(categoryEntry);
-                }
-
-                // Search and match subcategory
-                let subcategoryEntry = categoryEntry.subcategories.find(subcategory => subcategory.label === subcategoryLabel);
-
-                // Create subcategory if it doesn't exist
-                if (!subcategoryEntry) {
-                    subcategoryEntry = {
-                        label: subcategoryLabel,
-                        topicList: []
-                    };
-                    categoryEntry.subcategories.push(subcategoryEntry);
-                }
-
-                // Add the topic to the subcategory's topicList
-                subcategoryEntry.topicList.push({ id: item.id, topic: item.text });
-            }
 
             for (let agt of item.agreements) {
                 let agtName = agt.name;
@@ -252,57 +198,14 @@ export default ({
             }
         }
 
-
-        // console.log("category entry", topicByCategory)
-    
-
-        for (let subAgt of agreementList) {
-            subAgt.topicsID.sort((a, b) => {
-                if (a.topic < b.topic) return -1;
-                if (a.topic > b.topic) return 1;
-                return 0;
-            });
-
-            subAgt.topics.sort();
-        }
-
-        //find duplicate topics
-        topicList.sort((a, b) => {
-                if (a.topic < b.topic) return -1;
-                if (a.topic > b.topic) return 1;
-                return 0;
-            });
-        // console.log(topicList)
-
-        let topicMap = {};
-
-        // Build the map
-        for (let item of topicList) {
-            if (!topicMap[item.topic]) {
-                topicMap[item.topic] = [];
-            }
-            if (!topicMap[item.topic].includes(item.id)) {
-                topicMap[item.topic].push(item.id);
-            }
-        }
-
-        // Find topics with more than one unique id
-        let duplicateTopics = Object.keys(topicMap).filter(topic => topicMap[topic].length > 1);
-
-        // Extract the items from topicList based on the duplicate topics
-        let duplicates = topicList.filter(item => duplicateTopics.includes(item.topic));
-        console.log(duplicates);
-
-        // sort the arrary by date descending order
+        // right panel: sort the arrary by date descending order
         agreementList.sort(function(a, b) {
-                // return new Date(b.date) - new Date(a.date);
                 return new Date(a.date) - new Date(b.date);
-
             })
         
+        // right panel: number of subcategories in the blue box
         for (let agreement of agreementList) {
             let uniqueSubCats = new Set();
-
             for (let category of agreement.categoryList) {
                 for (let subCat of category.subCategoryList) {
                     uniqueSubCats.add(subCat);
@@ -310,12 +213,19 @@ export default ({
             }
             agreement.totalUniqueSubCats = uniqueSubCats.size;
         } 
-        
+        // console.log("agreementList", agreementList)
 
-        // console.log("agreementList", agreementList);
+        // left panel: read in the flattened topic data
+        let topicTimelines = {}
+        for (let country of topicTimelineData.countries) {
+            if (country.name == countryName) {
+                topicTimelines = country.Topics
+                // console.log("topicTimeline", topicTimelines)
+            }
+        }
         
         return {
-            countryName, data, agreementList, topicOptions, yearOptions, topicByCategory
+            countryName, data, agreementList, yearOptions, topicTimelines
         }
     }
 })
