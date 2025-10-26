@@ -444,12 +444,13 @@ export default {
 
         // Get data from the original file 
         for (let country of topicTimelineData.countries) {
+          console.log("checking country", country.name);
             if (country.name === countryName) {
-                if (country.Topics) {
-                    for (let [category, subcategories] of Object.entries(country.Topics)) {
+                if (country.Groups) {
+                    for (let [category, subcategories] of Object.entries(country.Groups)) {
                         for (let [subcategory, documents] of Object.entries(subcategories)) {
                             if (subcategory === subCategory) {
-                                // console.log("data used in this page", subcategory, documents);
+                                console.log("data used in this page", subcategory, documents);
                                 topicCategory = category;
                                 agreements = documents.agreements || [];
                                 reports = documents.reports || [];

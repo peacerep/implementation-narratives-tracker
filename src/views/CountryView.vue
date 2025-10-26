@@ -219,7 +219,7 @@ export default ({
         let topicTimelines = {}
         for (let country of topicTimelineData.countries) {
             if (country.name == countryName) {
-                topicTimelines = country.Topics
+                topicTimelines = country.Groups
                 // console.log("topicTimeline", topicTimelines)
             }
         }
